@@ -42,8 +42,21 @@
 #
 # Copyright 2017 Your name here, unless otherwise noted.
 #
-node default {
-include params
-include roles::osp8
+class ucsm {
+
+  package { 'rubygems':
+    ensure => present,
+  }
+
+  package { "json":
+    ensure => 'installed',
+    provider => 'gem',
+    require => Package['rubygems'],
+  }
+
+  package { "ucsmsdk":
+    ensure => present,
+    provider => "pip",
+  }
 
 }
