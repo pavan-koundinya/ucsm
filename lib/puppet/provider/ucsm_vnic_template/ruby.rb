@@ -1,6 +1,6 @@
 require 'json'
 
-Puppet::Type.type(:boot_policy).provide :ruby do
+Puppet::Type.type(:ucsm_vnic_template).provide :ruby do
  
   mk_resource_methods
   def handle
@@ -10,26 +10,30 @@ Puppet::Type.type(:boot_policy).provide :ruby do
      param_obj[:ip]=@resource[:ip]
      param_obj[:username]=@resource[:username]
      param_obj[:password]=@resource[:password]
-     param_obj[:descr]=@resource[:descr]
-     param_obj[:reboot_on_update]=@resource[:reboot_on_update]
-     param_obj[:policy_owner]=@resource[:policy_owner]
-     param_obj[:enforce_vnic_name]=@resource[:enforce_vnic_name]
-     param_obj[:boot_mode]=@resource[:boot_mode]
+     param_obj[:descr] = @resource[:descr]
+     param_obj[:switch_id]=@resource[:switch_id]
+     param_obj[:redundancy_pair_type]=@resource[:redundancy_pair_type]
+     param_obj[:templ_type] = @resource[:templ_type]
+     param_obj[:vlan_name] = @resource[:vlan_name]
+     param_obj[:default_net] = @resource[:default_net]
+     param_obj[:cdn_source] = @resource[:cdn_source]
+     param_obj[:admin_cdn_name] = @resource[:admin_cdn_name]
+     param_obj[:mtu] = @resource[:mtu]
+     param_obj[:ident_pool_name] = @resource[:ident_pool_name]
      param_obj[:state]=@resource[:state]
      #converting object to JSON string
      json_object=JSON.dump param_obj.to_json
      #Call to the python script using puppet execute along with all the parameters 
      path = File.join(File.dirname(__FILE__), '..', '..', '..')
-     notice("Before call to python script in handle")
      current = Puppet::Util::Execution.execute(
-      "python #{path}/boot_policy.py #{json_object}",
+      "python #{path}/vnic_template.py #{json_object}",
       :failonfail => true
     )
 Puppet.debug("#{current}")
 Puppet.debug("After execution")
 #Parse and send notice of the output of the execute command
 json=JSON.parse(current)
-if(json['changed'])
+if(json['changed'] or json['removed'])
 	notice(red(current))
 else
 	notice(green(current))
@@ -47,19 +51,18 @@ def green(text); colorize(text, 32); end
     
 
   def exists?
-        notice("Inside exists method")
      	param_obj=Hash.new
      	param_obj[:name]=@resource[:policy_name]
      	param_obj[:ip]=@resource[:ip]
      	param_obj[:username]=@resource[:username]
      	param_obj[:password]=@resource[:password]
+        param_obj[:vlan_name]=@resource[:vlan_name]
      	json_object=JSON.dump param_obj.to_json	
 	path = File.join(File.dirname(__FILE__), '..', '..', '..')
      	current = Puppet::Util::Execution.execute(
-      	"python #{path}/query_mo.py #{json_object}",
+      	"python #{path}/query_vnictemplate.py #{json_object}",
       	:failonfail => true
     	)
-        notice("current== #{current}")
  	if(current.eql? "true")
 	return true
 	else
@@ -73,7 +76,6 @@ def green(text); colorize(text, 32); end
   end
 
   def create
-        notice("Inside create method") 
     	handle
 	@property_hash[:state] == :present
   end
@@ -84,14 +86,12 @@ def green(text); colorize(text, 32); end
   def self.get_instance(resource)
 	param_obj=Hash.new
         param_obj[:ip]=resource[:ip]
-	notice("Ip within self.get instances is ip : #{param_obj[:ip]}")
         param_obj[:username]=resource[:username]
         param_obj[:password]=resource[:password]
 	json_object=JSON.dump param_obj.to_json
         path = File.join(File.dirname(__FILE__), '..', '..', '..')
-	notice("before python call")
         current = Puppet::Util::Execution.execute(
-        "python #{path}/query_instance.py #{json_object}",
+        "python #{path}/vnictemplateInstances.py #{json_object}",
         :failonfail => true
         )
   end
@@ -115,7 +115,6 @@ def self.prefetch(resources)
 #property values for later access  
   resources.each do |name,res|
 	list_instances=instances(res)
-	notice("Want from here :: #{list_instances}")
 	list_instances.each do |a| 
 		if @resource = resources[a['name']]
 			resource.provider=a
