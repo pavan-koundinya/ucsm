@@ -20,7 +20,7 @@ module: bios_policy
 short_description: Create, modify or remove bios  policy 
 
 description:
-  - Allows to check if boot policy exists. If present, check for desired configuration. If desired config is not present, apply settings. If boot policy is not present, create and apply desired settings. If the desired state is 'absent', remove boot policy if it is currently present
+  - Allows to check if bios policy exists. If present, check for desired configuration. If desired config is not present, apply settings. If bios policy is not present, create and apply desired settings. If the desired state is 'absent', remove bios policy if it is currently present
  
 version_added: "0.1.0"
 author: 
@@ -183,7 +183,7 @@ def bios_policy(input):
 				ucs_handle.commit()
 
 			except:
-				print("Remove Vlan mo failed")
+				print("Remove of bios policy mo failed")
 
 		else:
 			results['name']=name;

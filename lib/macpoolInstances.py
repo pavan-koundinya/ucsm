@@ -16,12 +16,14 @@
 
 DOCUMENTATION = '''
 ---
-module: vlanInstances
-short_description: Create, modify or remove boot policy 
+module: macpoolInstances
+short_description: Retrieves all instances of type mac pool.
 
 description:
-  - Allows to check if boot policy exists. If present, check for desired configuration. If desired config is not present, apply settings. If boot policy is not present, create and apply desired settings. If the desired state is 'absent', remove boot policy if it is currently present
- 
+  - Queries the UCSPE to retrieve all instances of the mac pool type.Returns a dictionary containing each mac pool instance object as value .The value is again a dictionary that contains the current configuration.
+E.g
+{"1": {"name": "utility", "descr": "", "reboot_on_update": "no", "policy_owner": "local", "enforce_vnic_name": "no", "boot_mode": "legacy"}, "2": {"name": "default", "descr": "", "reboot_on_update": "no", "policy_owner": "local", "enforce_vnic_name": "no", "boot_mode": "legacy"}}
+
 version_added: "0.1.0"
 author: 
     - "Cisco UCS Team"

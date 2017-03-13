@@ -18,10 +18,12 @@
 DOCUMENTATION = '''
 ---
 module: query_vnictemplate
-short_description: Create, modify or remove boot policy 
+short_description: Queries UCSPE for a specific vnic template policy managed object .Returns TRUE if object exists else returns FALSE.
+
 
 description:
-  - Allows to check if boot policy exists. If present, check for desired configuration. If desired config is not present, apply settings. If boot policy is not present, create and apply desired settings. If the desired state is 'absent', remove boot policy if it is currently present
+  - Allows to check if vnic template policy exists. If vnic template policy with the name exists then the script returns TRUE else it returns FALSE.
+
  
 version_added: "0.1.0"
 author: 

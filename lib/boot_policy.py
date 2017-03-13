@@ -96,7 +96,7 @@ def boot_policy(input):
 
 
 		   		except:
-					module.fail_json(msg="Modify boot policy mo failed")
+					print("Modify boot policy mo failed")
 
 ###----------if not, create boot policy with desired config ----------------
 
