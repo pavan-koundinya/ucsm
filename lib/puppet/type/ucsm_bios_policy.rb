@@ -32,7 +32,7 @@ Puppet::Type.newtype(:ucsm_bios_policy) do
   end
 
   newproperty(:consistent_device_naming) do
-    desc "Reboot_on_update option set to either yes/no"
+    desc "Device naming set to either enabled/disabled/platform-default"
   end
 
   newproperty(:state) do

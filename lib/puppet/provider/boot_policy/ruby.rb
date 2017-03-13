@@ -20,13 +20,10 @@ Puppet::Type.type(:boot_policy).provide :ruby do
      json_object=JSON.dump param_obj.to_json
      #Call to the python script using puppet execute along with all the parameters 
      path = File.join(File.dirname(__FILE__), '..', '..', '..')
-     notice("Before call to python script in handle")
      current = Puppet::Util::Execution.execute(
       "python #{path}/boot_policy.py #{json_object}",
       :failonfail => true
     )
-Puppet.debug("#{current}")
-Puppet.debug("After execution")
 #Parse and send notice of the output of the execute command
 json=JSON.parse(current)
 if(json['changed'])
@@ -47,7 +44,6 @@ def green(text); colorize(text, 32); end
     
 
   def exists?
-        notice("Inside exists method")
      	param_obj=Hash.new
      	param_obj[:name]=@resource[:policy_name]
      	param_obj[:ip]=@resource[:ip]
@@ -59,7 +55,7 @@ def green(text); colorize(text, 32); end
       	"python #{path}/query_mo.py #{json_object}",
       	:failonfail => true
     	)
-        notice("current== #{current}")
+
  	if(current.eql? "true")
 	return true
 	else
@@ -73,7 +69,6 @@ def green(text); colorize(text, 32); end
   end
 
   def create
-        notice("Inside create method") 
     	handle
 	@property_hash[:state] == :present
   end
@@ -84,16 +79,32 @@ def green(text); colorize(text, 32); end
   def self.get_instance(resource)
 	param_obj=Hash.new
         param_obj[:ip]=resource[:ip]
-	notice("Ip within self.get instances is ip : #{param_obj[:ip]}")
         param_obj[:username]=resource[:username]
         param_obj[:password]=resource[:password]
 	json_object=JSON.dump param_obj.to_json
         path = File.join(File.dirname(__FILE__), '..', '..', '..')
-	notice("before python call")
         current = Puppet::Util::Execution.execute(
         "python #{path}/query_instance.py #{json_object}",
         :failonfail => true
         )
+  end
+  def getmanagedobject(name)
+        param_obj=Hash.new
+        param_obj[:ip]=resource[:ip]
+	param_obj[:name]=name
+        param_obj[:username]=resource[:username]
+        param_obj[:password]=resource[:password]
+        json_object=JSON.dump param_obj.to_json
+        path = File.join(File.dirname(__FILE__), '..', '..', '..')
+        current = Puppet::Util::Execution.execute(
+        "python #{path}/query_boot_policy_mo.py #{json_object}",
+        :failonfail => true
+        )
+	return current			
+
+  end
+  def flush
+    @property_hash =getmanagedobject(resource[:policy_name])
   end
 
   def self.instances(resource)
@@ -115,7 +126,6 @@ def self.prefetch(resources)
 #property values for later access  
   resources.each do |name,res|
 	list_instances=instances(res)
-	notice("Want from here :: #{list_instances}")
 	list_instances.each do |a| 
 		if @resource = resources[a['name']]
 			resource.provider=a

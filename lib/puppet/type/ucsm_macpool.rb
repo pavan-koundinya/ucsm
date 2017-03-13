@@ -32,11 +32,11 @@ Puppet::Type.newtype(:ucsm_macpool) do
   end
 
   newproperty(:to) do
-    desc "Reboot_on_update option set to either yes/no"
+    desc "The ending mac address of the mac pool block"
   end
 
   newproperty(:r_from) do
-    desc "policy owner of the current managed object"
+    desc "The starting mac address of the mac pool block"
   end
 
   newproperty(:state) do

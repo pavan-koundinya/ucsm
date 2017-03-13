@@ -28,27 +28,27 @@ Puppet::Type.newtype(:ucsm_vlan) do
   end
 
   newproperty(:sharing) do
-    desc ""
+    desc "haring set to either none/primary/isolated/community
   end
   newproperty(:id) do
-    desc ""
+    desc "The unique vlan ID"
   end
   newproperty(:mcast_policy_name) do
-    desc ""
+    desc "Multicast Policy name"
   end
   newproperty(:policy_owner) do
-    desc ""
+    desc "The owner of the policy"
   end
   newproperty(:default_net) do
-    desc ""
+    desc "default network set to either yes/no"
   end
   newproperty(:pub_nw_name) do
-    desc ""
+    desc "The public network name"
   end
   newproperty(:compression_type) do
     desc ""
   end
   newproperty(:state) do
-    desc ""
+    desc "ensure whether the managed object is present or absent"
   end
 end
