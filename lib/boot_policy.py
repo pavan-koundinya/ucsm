@@ -95,7 +95,7 @@ def boot_policy(input):
 
 
 		   		except:
-					module.fail_json(msg="Modify boot policy mo failed")
+					print("Modify boot policy mo failed")
 
 ###----------if not, create boot policy with desired config ----------------
 
@@ -142,17 +142,8 @@ def boot_policy(input):
     return results
 def main():
     input={}
-    input['name']=sys.argv[1]
-    input['descr'] =sys.argv[2]
-    input['reboot_on_update'] =sys.argv[3]
-    input['policy_owner'] =sys.argv[4]
-    input['enforce_vnic_name'] =sys.argv[5]
-    input['boot_mode'] =sys.argv[6]
-    input['state'] =sys.argv[7]
-    input['ip']=sys.argv[8]
-    input['username']=sys.argv[9]
-    input['password']=sys.argv[10]
-    results = boot_policy(input)
+    json_input=json.loads(sys.argv[1])
+    results = boot_policy(json_input)
     resultsjson=json.dumps(results)
     print(resultsjson)
     return resultsjson

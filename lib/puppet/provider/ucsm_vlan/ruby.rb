@@ -1,6 +1,6 @@
 require 'json'
 
-Puppet::Type.type(:boot_policy).provide :ruby do
+Puppet::Type.type(:ucsm_vlan).provide :ruby do
  
   mk_resource_methods
   def handle
@@ -10,23 +10,27 @@ Puppet::Type.type(:boot_policy).provide :ruby do
      param_obj[:ip]=@resource[:ip]
      param_obj[:username]=@resource[:username]
      param_obj[:password]=@resource[:password]
-     param_obj[:descr]=@resource[:descr]
-     param_obj[:reboot_on_update]=@resource[:reboot_on_update]
+     param_obj[:mcast_policy_name] = @resource[:mcast_policy_name]
+     param_obj[:sharing]=@resource[:sharing]
+     param_obj[:id]=@resource[:id]
      param_obj[:policy_owner]=@resource[:policy_owner]
-     param_obj[:enforce_vnic_name]=@resource[:enforce_vnic_name]
-     param_obj[:boot_mode]=@resource[:boot_mode]
+     param_obj[:default_net]=@resource[:default_net]
+     param_obj[:pub_nw_name]=@resource[:pub_nw_name]
+     param_obj[:compression_type]=@resource[:compression_type]
      param_obj[:state]=@resource[:state]
      #converting object to JSON string
      json_object=JSON.dump param_obj.to_json
      #Call to the python script using puppet execute along with all the parameters 
      path = File.join(File.dirname(__FILE__), '..', '..', '..')
      current = Puppet::Util::Execution.execute(
-      "python #{path}/boot_policy.py #{json_object}",
+      "python #{path}/vlan.py #{json_object}",
       :failonfail => true
     )
+Puppet.debug("#{current}")
+Puppet.debug("After execution")
 #Parse and send notice of the output of the execute command
 json=JSON.parse(current)
-if(json['changed'])
+if(json['changed'] or json['removed'])
 	notice(red(current))
 else
 	notice(green(current))
@@ -52,10 +56,9 @@ def green(text); colorize(text, 32); end
      	json_object=JSON.dump param_obj.to_json	
 	path = File.join(File.dirname(__FILE__), '..', '..', '..')
      	current = Puppet::Util::Execution.execute(
-      	"python #{path}/query_mo.py #{json_object}",
+      	"python #{path}/query_vlanmo.py #{json_object}",
       	:failonfail => true
     	)
-
  	if(current.eql? "true")
 	return true
 	else
@@ -84,27 +87,9 @@ def green(text); colorize(text, 32); end
 	json_object=JSON.dump param_obj.to_json
         path = File.join(File.dirname(__FILE__), '..', '..', '..')
         current = Puppet::Util::Execution.execute(
-        "python #{path}/query_instance.py #{json_object}",
+        "python #{path}/vlanInstances.py #{json_object}",
         :failonfail => true
         )
-  end
-  def getmanagedobject(name)
-        param_obj=Hash.new
-        param_obj[:ip]=resource[:ip]
-	param_obj[:name]=name
-        param_obj[:username]=resource[:username]
-        param_obj[:password]=resource[:password]
-        json_object=JSON.dump param_obj.to_json
-        path = File.join(File.dirname(__FILE__), '..', '..', '..')
-        current = Puppet::Util::Execution.execute(
-        "python #{path}/query_boot_policy_mo.py #{json_object}",
-        :failonfail => true
-        )
-	return current			
-
-  end
-  def flush
-    @property_hash =getmanagedobject(resource[:policy_name])
   end
 
   def self.instances(resource)
