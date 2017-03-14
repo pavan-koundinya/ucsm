@@ -28,7 +28,7 @@ Puppet::Type.newtype(:ucsm_vlan) do
   end
 
   newproperty(:sharing) do
-    desc "haring set to either none/primary/isolated/community
+    desc "Sharing set to either none/primary/isolated/community"
   end
   newproperty(:id) do
     desc "The unique vlan ID"
