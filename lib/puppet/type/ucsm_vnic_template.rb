@@ -1,4 +1,4 @@
-Puppet::Type.newtype(:boot_policy) do
+Puppet::Type.newtype(:ucsm_vnic_template) do
   desc "Puppet type that manages boot policy object"
   ensurable
   newparam(:typename ,:namevar => true) do
@@ -31,19 +31,39 @@ Puppet::Type.newtype(:boot_policy) do
     desc "The description of the managed object"
   end
 
-  newproperty(:reboot_on_update) do
+  newproperty(:switch_id) do
     desc "Reboot_on_update option set to either yes/no"
   end
 
-  newproperty(:policy_owner) do
+  newproperty(:redundancy_pair_type) do
     desc "policy owner of the current managed object"
   end
 
-  newproperty(:enforce_vnic_name) do
+  newproperty(:templ_type) do
     desc "option to enforce the vnic name .set to either yes/no"
   end
 
-  newproperty(:boot_mode) do
+  newproperty(:vlan_name) do
+    desc "boot mode for current managed object"
+  end
+
+  newproperty(:default_net) do
+    desc "boot mode for current managed object"
+  end
+
+  newproperty(:cdn_source) do
+    desc "boot mode for current managed object"
+  end
+
+  newproperty(:admin_cdn_name) do
+    desc "boot mode for current managed object"
+  end
+
+  newproperty(:mtu) do
+    desc "boot mode for current managed object"
+  end
+
+  newproperty(:ident_pool_name) do
     desc "boot mode for current managed object"
   end
 

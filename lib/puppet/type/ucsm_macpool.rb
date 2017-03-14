@@ -1,5 +1,5 @@
-Puppet::Type.newtype(:boot_policy) do
-  desc "Puppet type that manages boot policy object"
+Puppet::Type.newtype(:ucsm_macpool) do
+  desc "Puppet type that manages macpool object"
   ensurable
   newparam(:typename ,:namevar => true) do
 	desc "namevar for puppet object"
@@ -31,20 +31,12 @@ Puppet::Type.newtype(:boot_policy) do
     desc "The description of the managed object"
   end
 
-  newproperty(:reboot_on_update) do
-    desc "Reboot_on_update option set to either yes/no"
+  newproperty(:to) do
+    desc "The ending mac address of the mac pool block"
   end
 
-  newproperty(:policy_owner) do
-    desc "policy owner of the current managed object"
-  end
-
-  newproperty(:enforce_vnic_name) do
-    desc "option to enforce the vnic name .set to either yes/no"
-  end
-
-  newproperty(:boot_mode) do
-    desc "boot mode for current managed object"
+  newproperty(:r_from) do
+    desc "The starting mac address of the mac pool block"
   end
 
   newproperty(:state) do
