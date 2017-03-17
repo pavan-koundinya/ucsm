@@ -10,13 +10,8 @@ Puppet::Type.type(:ucsm_vlan).provide :ruby do
      param_obj[:ip]=@resource[:ip]
      param_obj[:username]=@resource[:username]
      param_obj[:password]=@resource[:password]
-     param_obj[:mcast_policy_name] = @resource[:mcast_policy_name]
-     param_obj[:sharing]=@resource[:sharing]
      param_obj[:id]=@resource[:id]
-     param_obj[:policy_owner]=@resource[:policy_owner]
      param_obj[:default_net]=@resource[:default_net]
-     param_obj[:pub_nw_name]=@resource[:pub_nw_name]
-     param_obj[:compression_type]=@resource[:compression_type]
      param_obj[:state]=@resource[:state]
      #converting object to JSON string
      json_object=JSON.dump param_obj.to_json

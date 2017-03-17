@@ -41,7 +41,7 @@ def vnic_template(input):
 	name = input['name']
 	descr=input['descr']
 	switch_id=input['switch_id']
-	redundancy_pair_type=input['redundancy_pair_type']
+	redundancy_pair_type="none"
 	templ_type= input['templ_type']
 	vlan_name=input['vlan_name']
 	default_net=input['default_net']
@@ -74,7 +74,6 @@ def vnic_template(input):
 		if(mo_block and mo_block.name ==vlan_name and mo_block.default_net ==default_net):
 				
 			block_temp=True
-			print("entering if")
 		elif (vlan_name == "" and not(mo_children)):
 			block_temp=True
 		elif (mo_children):

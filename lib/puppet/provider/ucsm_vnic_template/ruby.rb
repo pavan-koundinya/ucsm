@@ -12,7 +12,6 @@ Puppet::Type.type(:ucsm_vnic_template).provide :ruby do
      param_obj[:password]=@resource[:password]
      param_obj[:descr] = @resource[:descr]
      param_obj[:switch_id]=@resource[:switch_id]
-     param_obj[:redundancy_pair_type]=@resource[:redundancy_pair_type]
      param_obj[:templ_type] = @resource[:templ_type]
      param_obj[:vlan_name] = @resource[:vlan_name]
      param_obj[:default_net] = @resource[:default_net]

@@ -17,10 +17,10 @@
 DOCUMENTATION = '''
 ---
 module: boot_policy
-short_description: Create, modify or remove boot policy 
+short_description: Create, modify or remove boot_policy 
 
 description:
-  - Allows to check if boot policy exists. If present, check for desired configuration. If desired config is not present, apply settings. If boot policy is not present, create and apply desired settings. If the desired state is 'absent', remove boot policy if it is currently present
+  - Allows to check if vnic template exists. If present, check for desired configuration. If desired config is not present, apply settings. If boot policy is not present, create and apply desired settings. If the desired state is 'absent', remove boot policy if it is currently present
  
 version_added: "0.1.0"
 author: 
@@ -30,123 +30,184 @@ author:
 
 import sys
 from ucsmsdk.mometa.lsboot.LsbootPolicy import LsbootPolicy
-from ucsmsdk.mometa.lsboot.LsbootBootSecurity import LsbootBootSecurity
 from ucsmsdk.mometa.lsboot.LsbootLan import LsbootLan
 from ucsmsdk.mometa.lsboot.LsbootLanImagePath import LsbootLanImagePath
-from ucsmsdk.mometa.lsboot.LsbootSan import LsbootSan
+from ucsmsdk.mometa.lsboot.LsbootStorage import LsbootStorage
+from ucsmsdk.mometa.lsboot.LsbootLocalStorage import LsbootLocalStorage
+from ucsmsdk.mometa.lsboot.LsbootLocalHddImage import LsbootLocalHddImage
+from ucsmsdk.mometa.lsboot.LsbootLocalLunImagePath import LsbootLocalLunImagePath
 from ucsmsdk.ucshandle import UcsHandle
 import json
+import jsonpickle
 import pickle
 import ucs_login
 import ucs_logout
+def query_locallunmo(ucs_handle,mo,device_name,order):
+	exists=False
+	mo_hierarchy_object = ucs_handle.query_dn("org-root/boot-policy-"+mo.name+"/storage/local-storage/local-hdd")
+	if (mo_hierarchy_object and mo_hierarchy_object.order==order):
+		mo_block= ucs_handle.query_children(in_dn="org-root/boot-policy-"+mo.name+"/storage/local-storage/local-hdd",hierarchy=True,class_id="lsbootLocalLunImagePath")
+		if(mo_block):
+			for obj in mo_block:
+				if(obj.lun_name == device_name):
+					exists=True
+		else:
+			exists= False
+	else:
+		exists = False
+	return exists
+def query_lanmo(ucs_handle,mo,device_name,order):
+	exists=False
+	mo_hierarchy_object = ucs_handle.query_dn("org-root/boot-policy-"+mo.name+"/lan")
+	if (mo_hierarchy_object and mo_hierarchy_object.order==order):
+		mo_block= ucs_handle.query_children(in_dn="org-root/boot-policy-"+mo.name+"/lan",hierarchy=True,class_id="lsbootLanImagePath")
+		if(mo_block):
+			for obj in mo_block:
+				if(obj.vnic_name == device_name):
+					exists=True
+		else:
+			exists= False
+	else:
+		exists = False
+	return exists
+	
 def boot_policy(input):
-
-    name = input['name']
-    descr = input['descr']
-    reboot_on_update = input['reboot_on_update']
-    policy_owner = input['policy_owner']
-    enforce_vnic_name = input['enforce_vnic_name']
-    boot_mode = input['boot_mode']
-    state = input['state']
-    ip=input['ip']
-    username=input['username']
-    password=input['password']
-
-    results = {}
-
-    ucs_handle = pickle.loads(str(ucs_login.main(ip,username,password)))
+	name = input['name']
+	type =input['type']
+	device_name = input['device_name']
+	order = input['order']
+	state = input['state']
+	ip=input['ip']
+	username=input['username']
+	password=input['password']
+	mo=""
+	mo_block=""
+	results = {}
+	ucs_handle = pickle.loads(str(ucs_login.main(ip,username,password)))
 ###-------CHECK IF MO EXISTS---------------------------------
 
-    try:
-
-	mo = ucs_handle.query_dn("org-root/boot-policy-"+name)
-    except:
-        print("Could not query children of org-root")
+	try:
+		mo = ucs_handle.query_dn("org-root/boot-policy-"+name)
+		
+	except:
+		print("Could not query children of macpool")
 
 
 ###----if expected state is "present"------------------------
 
-    if state == "present":
+	if state == "present":
 
-	    if mo:
 
-			if (mo.name == name and mo.descr == descr and 	mo.boot_mode == boot_mode and mo.reboot_on_update == reboot_on_update and mo.policy_owner == policy_owner and mo.enforce_vnic_name == enforce_vnic_name):
+		if (mo):
+			if(type == "LAN"):
+				lan_query=query_lanmo(ucs_handle,mo,device_name,order)
+				local_lun_query=True
+			elif(type == "LocalLun"):
+				local_lun_query=query_locallunmo(ucs_handle,mo,device_name,order)
+				lan_query=True
+			else:
+				print("The type mentioned is not supported by this module.")
+			if ( mo.name == name and lan_query and local_lun_query ):
 				results['name']=name;
 				results['expected'] = True;
 				results['changed'] = False;
 				results['present'] = True;
-				#results['mo_bootpolicy'] = json.dumps(json.loads(jsonpickle.encode(mo)));
 
 
 			else:
-		    		try:
-					mo.descr = descr
-					mo.boot_mode = boot_mode
-					mo.reboot_on_update = reboot_on_update
-					mo.policy_owner = policy_owner
-					mo.enforce_vnic_name = enforce_vnic_name
+				try:
+					if (lan_query and ~(local_lun_query)):
+						modified_mo = LsbootStorage(parent_mo_or_dn=mo, )
+						mo_1 = LsbootLocalStorage(parent_mo_or_dn=modified_mo, )
+						mo_1_1 = LsbootLocalHddImage(parent_mo_or_dn=mo_1, order=order)
+						mo_1_1_1 = LsbootLocalLunImagePath(parent_mo_or_dn=mo_1_1, lun_name=device_name, type="primary")
+						ucs_handle.add_mo(modified_mo, True)
+						ucs_handle.commit()
+					elif(local_lun_query and ~(lan_query)):
+						modified_mo = LsbootLan(parent_mo_or_dn=mo, order=order)
+						mo_1_1 = LsbootLanImagePath(parent_mo_or_dn=modified_mo, type="primary", vnic_name=device_name)
+						ucs_handle.add_mo(mo, True)
+						ucs_handle.commit()
+					else:
+						modified_mo = LsbootStorage(parent_mo_or_dn=mo, )
+						mo_1 = LsbootLocalStorage(parent_mo_or_dn=modified_mo, )
+						mo_1_1 = LsbootLocalHddImage(parent_mo_or_dn=mo_1, order=order)
+						mo_1_1_1 = LsbootLocalLunImagePath(parent_mo_or_dn=mo_1_1, lun_name=device_name, type="primary")
+						ucs_handle.add_mo(mo, True)
+						ucs_handle.commit()
+						modified_mo = LsbootLan(parent_mo_or_dn=mo, order=order)
+						mo_1_1 = LsbootLanImagePath(parent_mo_or_dn=mo_1, type="primary", vnic_name=device_name)
+						ucs_handle.add_mo(mo, True)
+						ucs_handle.commit()
 					results['name']=name;
-					results['expected'] = False;
-					results['changed'] = True;
 					results['present'] = True;
-					ucs_handle.set_mo(mo)
-					ucs_handle.commit()
-					#results['mo_bootpolicy'] = json.dumps(json.loads(jsonpickle.encode(mo)));
+					results['removed'] = False;
+					results['changed'] = True
 
-
-		   		except:
-					print("Modify boot policy mo failed")
+		   		except Exception,e:
+					print(Exception)
+					print(e)
 
 ###----------if not, create boot policy with desired config ----------------
 
-	    else:
-	    	try:
-			#print("inside creator block")
-			mo = LsbootPolicy(parent_mo_or_dn="org-root", name=name, descr=descr, reboot_on_update=reboot_on_update, policy_owner=policy_owner, enforce_vnic_name=enforce_vnic_name, boot_mode=boot_mode)
-			results['name']=name;
-			results['present'] = False;
-			results['created'] = True;
-			results['changed'] = True;
-			#results['mo_bootpolicy'] = json.dumps(json.loads(jsonpickle.encode(mo)));
+		else:
+			try:
+				
+				mo = LsbootPolicy(parent_mo_or_dn="org-root", name=name, descr="")
+				if(type == "LAN"):
+					mo_1 = LsbootLan(parent_mo_or_dn=mo, order=order)
+					mo_1_1 = LsbootLanImagePath(parent_mo_or_dn=mo_1, type="primary", vnic_name=device_name)
+				else:
+					mo_2 = LsbootStorage(parent_mo_or_dn=mo, order=order)
+					mo_2_1 = LsbootLocalStorage(parent_mo_or_dn=mo_2, )
+					mo_2_1_1 = LsbootLocalHddImage(parent_mo_or_dn=mo_2_1, order=order)
+					mo_2_1_1_1 = LsbootLocalLunImagePath(parent_mo_or_dn=mo_2_1_1, lun_name=device_name, type="primary")
+				ucs_handle.add_mo(mo)
+				ucs_handle.commit()				
+				results['name']=name;
+				results['present'] = False;
+				results['created'] = True;
+				results['changed'] = True;
 
-			ucs_handle.add_mo(mo)
-			ucs_handle.commit()
-			
 
-	   	except:
-			print("Boot Policy creation failed")
+			except:
+				print("boot policy creation failed")
 
 
 ###------if expected state is "absent"----------------------------
 
-    if state == "absent":
+	if state == "absent":
 
-	    if mo:
+		if mo:
 
-    		try:
-			ucs_handle.remove_mo(mo)
+			try:
+				ucs_handle.remove_mo(mo)
+				ucs_handle.commit()
+				results['name']=name;
+				results['present'] = False;
+				results['removed'] = True;
+				
+
+			except:
+				print("Removal boot policy mo failed")
+
+		else:
 			results['name']=name;
+			results['removed'] = False;
 			results['present'] = False;
-			results['removed'] = True;
-			ucs_handle.commit()
-
-   		except:
-			print("Remove boot policy mo failed")
-
-	    else:
-		results['name']=name;
-    		results['removed'] = False;
-		results['present'] = False;
-    ucs_handle=pickle.dumps(ucs_handle)
-    ucs_logout.main(ucs_handle)
-    return results
+	ucs_handle=pickle.dumps(ucs_handle)
+	ucs_logout.main(ucs_handle)
+	return results
 def main():
-    input={}
-    json_input=json.loads(sys.argv[1])
-    results = boot_policy(json_input)
-    resultsjson=json.dumps(results)
-    print(resultsjson)
-    return resultsjson
+	json_input=json.loads(sys.argv[1])
+	results = boot_policy(json_input)
+	resultsjson=json.dumps(results)
+	print(resultsjson)
+	return resultsjson
+	print(exists)
+	
+	
+	
 
 if __name__ == '__main__':
     main()

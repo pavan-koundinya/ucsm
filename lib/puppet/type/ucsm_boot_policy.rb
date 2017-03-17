@@ -1,4 +1,4 @@
-Puppet::Type.newtype(:boot_policy) do
+Puppet::Type.newtype(:ucsm_boot_policy) do
   desc "Puppet type that manages boot policy object"
   ensurable
   newparam(:typename ,:namevar => true) do
@@ -27,26 +27,16 @@ Puppet::Type.newtype(:boot_policy) do
     desc "The name of the managed object(This is with respect to ucspe)"
   end
 
-  newproperty(:descr) do
-    desc "The description of the managed object"
+  newproperty(:type) do
+    desc "The type of Local LUN Image path.Values acccepted are primary,secondary and any"
   end
 
-  newproperty(:reboot_on_update) do
-    desc "Reboot_on_update option set to either yes/no"
+  newproperty(:device_name) do
+    desc "The name of the Local LUN Image Path"
   end
-
-  newproperty(:policy_owner) do
-    desc "policy owner of the current managed object"
+  newproperty(:order) do
+    desc "The name of the Local LUN Image Path"
   end
-
-  newproperty(:enforce_vnic_name) do
-    desc "option to enforce the vnic name .set to either yes/no"
-  end
-
-  newproperty(:boot_mode) do
-    desc "boot mode for current managed object"
-  end
-
   newproperty(:state) do
     desc "ensure whether the managed object is present or absent"
   end

@@ -1,6 +1,6 @@
 require 'json'
 
-Puppet::Type.type(:boot_policy).provide :ruby do
+Puppet::Type.type(:ucsm_boot_policy).provide :ruby do
  
   mk_resource_methods
   def handle
@@ -10,11 +10,9 @@ Puppet::Type.type(:boot_policy).provide :ruby do
      param_obj[:ip]=@resource[:ip]
      param_obj[:username]=@resource[:username]
      param_obj[:password]=@resource[:password]
-     param_obj[:descr]=@resource[:descr]
-     param_obj[:reboot_on_update]=@resource[:reboot_on_update]
-     param_obj[:policy_owner]=@resource[:policy_owner]
-     param_obj[:enforce_vnic_name]=@resource[:enforce_vnic_name]
-     param_obj[:boot_mode]=@resource[:boot_mode]
+     param_obj[:type]=@resource[:type]
+     param_obj[:device_name]=@resource[:device_name]
+     param_obj[:order]=@resource[:order]
      param_obj[:state]=@resource[:state]
      #converting object to JSON string
      json_object=JSON.dump param_obj.to_json
@@ -46,6 +44,8 @@ def green(text); colorize(text, 32); end
   def exists?
      	param_obj=Hash.new
      	param_obj[:name]=@resource[:policy_name]
+	param_obj[:type]=@resource[:type]
+	param_obj[:device_name]=@resource[:device_name]
      	param_obj[:ip]=@resource[:ip]
      	param_obj[:username]=@resource[:username]
      	param_obj[:password]=@resource[:password]
@@ -77,10 +77,12 @@ def green(text); colorize(text, 32); end
   end
 
   def self.get_instance(resource)
+	notice("Coming in self.instance")
 	param_obj=Hash.new
         param_obj[:ip]=resource[:ip]
         param_obj[:username]=resource[:username]
         param_obj[:password]=resource[:password]
+        param_obj[:type]=resource[:type]
 	json_object=JSON.dump param_obj.to_json
         path = File.join(File.dirname(__FILE__), '..', '..', '..')
         current = Puppet::Util::Execution.execute(
@@ -112,7 +114,6 @@ def green(text); colorize(text, 32); end
     #Not exactly sure but its working !!!!
     arr=Array.new
     conf=self.get_instance(resource)
-    #notice("After call to self.get_ instance :::: #{conf} ")
     list_objects=JSON.parse(conf)
     list_objects.each do |key,json_obj|
 	temp=json_obj

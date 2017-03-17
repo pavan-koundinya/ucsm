@@ -43,16 +43,31 @@ import ucs_logout
 
 def query_mo(input):
     name=input['name']
+    type=input['type']
+    device_name=input['device_name']
     ip=input['ip']
     username=input['username']
     password=input['password']
     exists=''
+    mo_children_exists=False
     ucs_handle = pickle.loads(str(ucs_login.main(ip,username,password)))
     try:
         mo = ucs_handle.query_dn("org-root/boot-policy-"+name)
-    except:
+	if(type == "LAN"):
+	    mo_children =ucs_handle.query_children(in_dn="org-root/boot-policy-"+name+"/lan",hierarchy=True)
+	    for obj in mo_children:
+	    	if(obj.vnic_name==device_name):
+		    mo_children_exists=True
+	elif(type == "LocalLun"):
+	    mo_children = ucs_handle.query_children(in_dn="org-root/boot-policy-"+name+"/storage/local-storage/local-hdd",hierarchy=True)
+	    for obj in mo_children:
+		if(obj.lun_name == device_name):
+		    mo_children_exists=True	    	
+    except Exception,e:
+	print(Exception)
+	print(e)
         print("Could not query children of org-root")
-    if mo:
+    if (mo and mo_children_exists):
 	exists="true"
     else: 
 	exists="false"
