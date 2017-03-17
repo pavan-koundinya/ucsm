@@ -38,13 +38,13 @@ import ucs_login
 import ucs_logout
 def vlan(input):
 	name = input['name']
-	sharing=input['sharing']
+	sharing="none"
 	id=input['id']
-	mcast_policy_name = input['mcast_policy_name']
-	policy_owner=input['policy_owner']
+	mcast_policy_name = ""
+	policy_owner="local"
 	default_net=input['default_net']
-	pub_nw_name=input['pub_nw_name']
-	compression_type=input['compression_type']
+	pub_nw_name=""
+	compression_type="included"
 	state = input['state']
 	ip=input['ip']
 	username=input['username']

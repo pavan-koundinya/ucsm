@@ -32,12 +32,9 @@ Puppet::Type.newtype(:ucsm_vnic_template) do
   end
 
   newproperty(:switch_id) do
-    desc "Reboot_on_update option set to either yes/no"
+    desc "Switch id  set to either 'A' or 'B' or 'A-B' to enable failover"
   end
 
-  newproperty(:redundancy_pair_type) do
-    desc "policy owner of the current managed object"
-  end
 
   newproperty(:templ_type) do
     desc "option to enforce the vnic name .set to either yes/no"

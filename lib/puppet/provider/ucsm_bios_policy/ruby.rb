@@ -55,9 +55,9 @@ def green(text); colorize(text, 32); end
       	:failonfail => true
     	)
  	if(current.eql? "true")
-	return true
+	return "present"
 	else
- 	return false
+ 	return "absent"
 	end
   end
 
