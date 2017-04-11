@@ -1,6 +1,6 @@
 require 'json'
 
-Puppet::Type.type(:ucsm_bios_policy).provide :ruby do
+Puppet::Type.type(:ucsm_hostfirmwarepackage).provide :ruby do
  
   mk_resource_methods
   def handle
@@ -10,22 +10,19 @@ Puppet::Type.type(:ucsm_bios_policy).provide :ruby do
      param_obj[:ip]=@resource[:ip]
      param_obj[:username]=@resource[:username]
      param_obj[:password]=@resource[:password]
-     param_obj[:descr] = @resource[:descr]
-     param_obj[:consistent_device_naming]=@resource[:consistent_device_naming]
+     param_obj[:descr]=@resource[:descr]
      param_obj[:state]=@resource[:state]
      #converting object to JSON string
      json_object=JSON.dump param_obj.to_json
      #Call to the python script using puppet execute along with all the parameters 
      path = File.join(File.dirname(__FILE__), '..', '..', '..')
      current = Puppet::Util::Execution.execute(
-      "python #{path}/bios_policy.py #{json_object}",
+      "python #{path}/host_firmware_package.py #{json_object}",
       :failonfail => true
     )
-Puppet.debug("#{current}")
-Puppet.debug("After execution")
 #Parse and send notice of the output of the execute command
 json=JSON.parse(current)
-if(json['changed'] or json['removed'])
+if(json['changed'])
 	notice(red(current))
 else
 	notice(green(current))
@@ -51,9 +48,10 @@ def green(text); colorize(text, 32); end
      	json_object=JSON.dump param_obj.to_json	
 	path = File.join(File.dirname(__FILE__), '..', '..', '..')
      	current = Puppet::Util::Execution.execute(
-      	"python #{path}/query_biospolicymo.py #{json_object}",
+      	"python #{path}/query_hostFirmwarepackage.py #{json_object}",
       	:failonfail => true
     	)
+
  	if(current.eql? "true")
 	return true
 	else
@@ -82,17 +80,15 @@ def green(text); colorize(text, 32); end
 	json_object=JSON.dump param_obj.to_json
         path = File.join(File.dirname(__FILE__), '..', '..', '..')
         current = Puppet::Util::Execution.execute(
-        "python #{path}/biospolicyInstances.py #{json_object}",
+        "python #{path}/hostFirmwarePackageInstances.py #{json_object}",
         :failonfail => true
         )
   end
 
   def self.instances(resource)
     #creating a dummy instance for the purpose of populating the resource values
-    #Not exactly sure but its working !!!!
     arr=Array.new
     conf=self.get_instance(resource)
-    #notice("After call to self.get_ instance :::: #{conf} ")
     list_objects=JSON.parse(conf)
     list_objects.each do |key,json_obj|
 	temp=json_obj

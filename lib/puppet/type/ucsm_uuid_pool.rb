@@ -1,4 +1,4 @@
-Puppet::Type.newtype(:ucsm_macpool) do
+Puppet::Type.newtype(:ucsm_uuid_pool) do
   desc "Puppet type that manages macpool object"
   ensurable
   newparam(:typename ,:namevar => true) do
@@ -49,9 +49,9 @@ Puppet::Type.newtype(:ucsm_macpool) do
     desc "The ending mac address of the mac pool block"
   validate do |value|
 	if value.to_s.strip != ""
-	    regex = "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"
+	    regex = "^([0-9A-Za-z]{4}[-][0-9A-Za-z]{12})$"
 	    unless value =~ /#{regex}/
-	    	raise ArgumentError, "%s is not a valid 'to' mac address" %value
+	    	raise ArgumentError, "%s is not a valid 'to' uuid value" %value
 	    end
 	end
   end
@@ -61,9 +61,9 @@ end
     desc "The starting mac address of the mac pool block"
   validate do |value|
 	if value.to_s.strip != ""
-	    regex = "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"
+	    regex = "^([0-9A-Za-z]{4}[-][0-9A-Za-z]{12})$"
             unless value =~ /#{regex}/
-            	raise ArgumentError, "%s is not a valid 'from' mac address" %value
+            	raise ArgumentError, "%s is not a valid 'from' uuid value" %value
             end
 	end
   end

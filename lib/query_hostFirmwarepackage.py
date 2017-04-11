@@ -1,3 +1,4 @@
+
 #!/usr/bin/python
 # -*- mode: python -*-
 
@@ -16,12 +17,12 @@
 
 DOCUMENTATION = '''
 ---
-module: biospolicyInstances
-short_description: Retrieve all instances of type bios policy.  
+module: query_hostFirmwarePackage
+short_description: Queries UCSPE for a specific host firmware package managed object .Returns TRUE if object exists else returns FALSE.
 
 description:
-  - Allows to retrieve all instances of bios policy type. Also retrieves consistent device naming object if it exists .
- 
+  - Allows to check if vlan managed object exists. If host firmware package object with the name exists then the script returns TRUE else it returns FALSE.
+
 version_added: "0.1.0"
 author: 
     - "Cisco UCS Team"
@@ -29,6 +30,7 @@ author:
 '''
 
 import sys
+from ucsmsdk.mometa.fabric.FabricVlan import FabricVlan
 from ucsmsdk.ucshandle import UcsHandle
 import json
 import jsonpickle
@@ -36,42 +38,32 @@ import pickle
 import ucs_login
 import ucs_logout
 
-try_list={}
-def query_biospolicyInstances(input):
+def query_hostfirmwarepackage(input):
+    name=input['name']
     ip=input['ip']
     username=input['username']
     password=input['password']
     exists=''
-    temp_dict_obj={}
     ucs_handle = pickle.loads(str(ucs_login.main(ip,username,password)))
     try:
-        mo = ucs_handle.query_classid("biosVProfile")
+        mo = ucs_handle.query_dn("org-root/fw-host-pack-"+name)
     except:
-	results['error'] = "Could not query children of org-root"
-        return results
+        print("Could not query children of org-root")
     if mo:
-	count=0
-	for obj in mo:
-            mo_children=ucs_handle.query_children(in_dn="org-root/bios-prof-"+obj.name,class_id="biosVfConsistentDeviceNameControl")
-
-	    count=count+1
-	    temp_dict_obj['consistent_device_naming']=mo_children[0].vp_cdn_control
-	    temp_dict_obj['name']=obj.name
-	    temp_dict_obj['descr']=obj.descr
-	    try_list[count]=temp_dict_obj
-	    temp_dict_obj={}
+	exists="true"
     else: 
-	exists=""
+	exists="false"
     ucs_handle=pickle.dumps(ucs_handle)
     ucs_logout.main(ucs_handle)
-    return try_list
+    return exists
 
-def main(): 
+def main():
+    
     json_input=json.loads(sys.argv[1])
-    results = query_biospolicyInstances(json_input)
-    resultsjson=json.dumps(results)
+    results = query_hostfirmwarepackage(json_input)
+    resultsjson=results
     print(resultsjson)
-    try_list={}
+    #return resultsjson
 
 if __name__ == '__main__':
     main()

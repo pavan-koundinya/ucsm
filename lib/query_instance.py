@@ -111,7 +111,14 @@ def query_instance(input):
                         temp_dict_obj={}
                         count=count+1
 	    else:
-		print("Wrong type specified")
+		temp_dict_obj['name']=obj.name
+		temp_dict_obj['order']=""
+		temp_dict_obj['device_name']=""
+		temp_dict_obj['type']=""
+		try_list[count]=temp_dict_obj
+		temp_dict_obj={}
+		count=count+1
+		
     else: 
 	exists=""
     ucs_handle=pickle.dumps(ucs_handle)

@@ -1,5 +1,5 @@
 require 'ipaddr'
-Puppet::Type.newtype(:ucsm_boot_policy) do
+Puppet::Type.newtype(:ucsm_hostfirmwarepackage) do
   desc "Puppet type that manages boot policy object"
   ensurable
   newparam(:typename ,:namevar => true) do
@@ -40,34 +40,9 @@ Puppet::Type.newtype(:ucsm_boot_policy) do
         end
   end
 
-  newproperty(:type) do
-    desc "The type of Local LUN Image path.Values acccepted are primary,secondary and any"
-    validate do |value|
-          if !(value.to_s.strip == "LAN" or value.to_s.strip == "LocalLun" or value.to_s.strip == "")
-            raise  ArgumentError, "The type allowed is LAN/LocalLun "
-          end
-        end
-
-  end
-
-  newproperty(:device_name) do
+  
+  newproperty(:descr) do
     desc "The name of the Local LUN Image Path"
-        validate do |value|
-	if value != ""
-          if value.length > 10
-            raise  ArgumentError, "The device name exceeds maximum character length of 10"
-          end
-	end
-        end
-
-  end
-  newproperty(:order) do
-    desc "The name of the Local LUN Image Path"
-    validate do |value|
-	if !(value =~ /^-?[0-9]+$/ or value.to_s.strip == "")
-		raise  ArgumentError, "The order should be an integer value %s" % value
-	end
-    end
   end
 
   newproperty(:state) do

@@ -90,7 +90,7 @@ def boot_policy(input):
 		mo = ucs_handle.query_dn("org-root/boot-policy-"+name)
 		
 	except:
-		print("Could not query children of macpool")
+		return '{"error":"Could not query children of boot policy"}'
 
 
 ###----if expected state is "present"------------------------
@@ -98,7 +98,7 @@ def boot_policy(input):
 	if state == "present":
 
 
-		if (mo):
+		if (mo and (type == "LAN" or type == "LocalLun")):
 			if(type == "LAN"):
 				lan_query=query_lanmo(ucs_handle,mo,device_name,order)
 				local_lun_query=True
@@ -139,14 +139,18 @@ def boot_policy(input):
 						mo_1_1 = LsbootLanImagePath(parent_mo_or_dn=mo_1, type="primary", vnic_name=device_name)
 						ucs_handle.add_mo(mo, True)
 						ucs_handle.commit()
-					results['name']=name;
-					results['present'] = True;
-					results['removed'] = False;
+					results['name']=name
+					results['present'] = True
+					results['removed'] = False
 					results['changed'] = True
 
 		   		except Exception,e:
-					print(Exception)
-					print(e)
+					return '{"error":"%s" %e}'
+		elif(mo and type ==""):
+		    results['name'] = name
+		    results['present'] = True
+		    results['removed'] = False
+		    results['changed'] = False
 
 ###----------if not, create boot policy with desired config ----------------
 
@@ -154,14 +158,15 @@ def boot_policy(input):
 			try:
 				
 				mo = LsbootPolicy(parent_mo_or_dn="org-root", name=name, descr="")
-				if(type == "LAN"):
-					mo_1 = LsbootLan(parent_mo_or_dn=mo, order=order)
-					mo_1_1 = LsbootLanImagePath(parent_mo_or_dn=mo_1, type="primary", vnic_name=device_name)
-				else:
-					mo_2 = LsbootStorage(parent_mo_or_dn=mo, order=order)
-					mo_2_1 = LsbootLocalStorage(parent_mo_or_dn=mo_2, )
-					mo_2_1_1 = LsbootLocalHddImage(parent_mo_or_dn=mo_2_1, order=order)
-					mo_2_1_1_1 = LsbootLocalLunImagePath(parent_mo_or_dn=mo_2_1_1, lun_name=device_name, type="primary")
+				if(type  != ""):
+				    if(type == "LAN"):
+					    mo_1 = LsbootLan(parent_mo_or_dn=mo, order=order)
+					    mo_1_1 = LsbootLanImagePath(parent_mo_or_dn=mo_1, type="primary", vnic_name=device_name)
+				    else:
+					    mo_2 = LsbootStorage(parent_mo_or_dn=mo, order=order)
+					    mo_2_1 = LsbootLocalStorage(parent_mo_or_dn=mo_2, )
+					    mo_2_1_1 = LsbootLocalHddImage(parent_mo_or_dn=mo_2_1, order=order)
+					    mo_2_1_1_1 = LsbootLocalLunImagePath(parent_mo_or_dn=mo_2_1_1, lun_name=device_name, type="primary")
 				ucs_handle.add_mo(mo)
 				ucs_handle.commit()				
 				results['name']=name;
@@ -171,7 +176,7 @@ def boot_policy(input):
 
 
 			except:
-				print("boot policy creation failed")
+				return '{"error":"boot policy creation failed"}'
 
 
 ###------if expected state is "absent"----------------------------
@@ -189,7 +194,7 @@ def boot_policy(input):
 				
 
 			except:
-				print("Removal boot policy mo failed")
+				return '{"error":"Removal boot policy mo failed"}'
 
 		else:
 			results['name']=name;

@@ -1,4 +1,4 @@
-Puppet::Type.newtype(:ucsm_macpool) do
+Puppet::Type.newtype(:ucsm_storageprofile) do
   desc "Puppet type that manages macpool object"
   ensurable
   newparam(:typename ,:namevar => true) do
@@ -34,39 +34,15 @@ Puppet::Type.newtype(:ucsm_macpool) do
   newproperty(:policy_name) do
     desc "The name of the managed object(This is with respect to ucspe)"
         validate do |value|
-          if value.length > 32
-            raise  ArgumentError, "The policy name exceeds maximum character length of 32"
+          if value.length > 16
+            raise  ArgumentError, "The policy name exceeds maximum character length of 16"
           end
         end
 
   end
 
-  newproperty(:descr) do
-    desc "The description of the managed object"
-  end
-
-  newproperty(:to) do
-    desc "The ending mac address of the mac pool block"
-  validate do |value|
-	if value.to_s.strip != ""
-	    regex = "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"
-	    unless value =~ /#{regex}/
-	    	raise ArgumentError, "%s is not a valid 'to' mac address" %value
-	    end
-	end
-  end
-end
-
-  newproperty(:r_from) do
-    desc "The starting mac address of the mac pool block"
-  validate do |value|
-	if value.to_s.strip != ""
-	    regex = "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"
-            unless value =~ /#{regex}/
-            	raise ArgumentError, "%s is not a valid 'from' mac address" %value
-            end
-	end
-  end
+  newproperty(:local_lun_list, :array_matching => :all) do
+    desc "Local lun list contains list of dictionary objects"
   end
 
   newproperty(:state) do

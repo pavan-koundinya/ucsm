@@ -1,11 +1,12 @@
 ucsm_boot_policy{'PXE-Local-Boot':
-   	policy_name => "LOCAL-BOOT",
-        order => "2",
-	device_name => "firstlAN",
+   	policy_name => "test_bootutrui",
+        order => "1",
+	device_name => "Boot-L",
 	type => "LocalLun",
-        state => "present",
+        state => "absent",
         ip => "172.31.219.215",
         username => "admin",
         password => "paasword",
 }
+
 
