@@ -77,7 +77,6 @@ def green(text); colorize(text, 32); end
   end
 
   def self.get_instance(resource)
-	notice("Coming in self.instance")
 	param_obj=Hash.new
         param_obj[:ip]=resource[:ip]
         param_obj[:username]=resource[:username]
@@ -111,7 +110,6 @@ def green(text); colorize(text, 32); end
 
   def self.instances(resource)
     #creating a dummy instance for the purpose of populating the resource values
-    #Not exactly sure but its working !!!!
     arr=Array.new
     conf=self.get_instance(resource)
     list_objects=JSON.parse(conf)

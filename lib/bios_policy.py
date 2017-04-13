@@ -85,7 +85,8 @@ def bios_policy(input):
 		mo = ucs_handle.query_dn("org-root/bios-prof-"+name)
 		mo_block=ucs_handle.query_dn("org-root/bios-prof-"+name+"/Consistent-Device-Name-Control")
 	except:
-		print("Could not query children of bios_policy")
+		results['error'] = "Could not query children of bios_policy"
+		retrun results
 
 
 ###----if expected state is "present"------------------------
@@ -114,8 +115,8 @@ def bios_policy(input):
 
 
 		   		except Exception as e:
-					print("Modification of bios policy mo failed"+str(e))
-
+					results['error'] = "Modification of bios policy mo failed"+str(e)
+					return results
 ###----------if not, create boot policy with desired config ----------------
 
 		else:
@@ -165,9 +166,9 @@ def bios_policy(input):
 
 			
 
-			except:
-				print("Bios Policy creation failed")
-
+			except Exception as e:
+				results['error'] = "Bios Policy creation failed"+str(e)
+				return results
 
 ###------if expected state is "absent"----------------------------
 
@@ -182,9 +183,9 @@ def bios_policy(input):
 				results['removed'] = True;
 				ucs_handle.commit()
 
-			except:
-				print("Remove of bios policy mo failed")
-
+			except Exception as e:
+				results['error'] = "Remove of bios policy mo failed"+str(e)
+				return results
 		else:
 			results['name']=name;
 			results['removed'] = False;

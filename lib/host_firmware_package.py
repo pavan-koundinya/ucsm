@@ -16,11 +16,11 @@
 
 DOCUMENTATION = '''
 ---
-module: mac_pool
-short_description: Create, modify or remove mac pool policy
+module: host_firmware_policy
+short_description: Create, modify or remove host firmware policy 
 
 description:
-  - Allows to check if mac pool policy exists. If present, check for desired configuration. If desired config is not present, apply settings. If mac pool policy is not present, create and apply desired settings. If the desired state is 'absent', remove mac pool policy if it is currently present
+  - Allows to check if host firmware policy exists. If present, check for desired configuration. If desired config is not present, apply settings. If host firmware policy is not present, create and apply desired settings. If the desired state is 'absent', remove host firware policy if it is currently present
  
 version_added: "0.1.0"
 author: 
@@ -29,95 +29,76 @@ author:
 '''
 
 import sys
-from ucsmsdk.mometa.macpool.MacpoolPool import MacpoolPool
-from ucsmsdk.mometa.macpool.MacpoolBlock import MacpoolBlock
+from ucsmsdk.mometa.firmware.FirmwareComputeHostPack import FirmwareComputeHostPack
+from ucsmsdk.mometa.firmware.FirmwareExcludeServerComponent import FirmwareExcludeServerComponent
 from ucsmsdk.ucshandle import UcsHandle
 import json
 import jsonpickle
 import pickle
 import ucs_login
 import ucs_logout
-def mac_pool(input):
+def host_firmware_package(input):
 	name = input['name']
-	descr=input['descr']
-	to=input['to']
-	r_from=input['r_from']
+	descr = input['descr']
 	state = input['state']
 	ip=input['ip']
 	username=input['username']
 	password=input['password']
-	mo=""
-	mo_block=""
 	results = {}
 	ucs_handle = pickle.loads(str(ucs_login.main(ip,username,password)))
 ###-------CHECK IF MO EXISTS---------------------------------
 
 	try:
-		mo = ucs_handle.query_dn("org-root/mac-pool-"+name)
-		mo_block=ucs_handle.query_dn("org-root/mac-pool-"+name+"/block-"+r_from+"-"+to)
-	except:
-		print("Could not query children of macpool")
+		mo = ucs_handle.query_dn("org-root/fw-host-pack-"+name)
+	except Exception as e:
+		results['error'] = "Could not query children of host firware package " + str(e)
+		return results
 
 
 ###----if expected state is "present"------------------------
 
 	if state == "present":
 		if mo:
-			if ( mo.descr == descr ):
-				if(to <> "" and r_from <> ""):
-					if(mo_block):
-						results['name']=name;
-						results['expected'] = True;
-						results['changed'] = False;
-						results['present'] = True;
-					else:
-						#modified_mo =  MacpoolPool(parent_mo_or_dn="org-root", name=name, descr=descr)
-						mo_1= MacpoolBlock(parent_mo_or_dn=mo, to=to, r_from=r_from)				
-						ucs_handle.add_mo(mo,True)
-						ucs_handle.commit()
-						results['name']=name;
-						results['present'] = True;
-						results['removed'] = False;
-						results['changed'] = True
-				else:
-					results['name']=name;
-					results['expected'] = True;
-					results['changed'] = False;
-					results['present'] = True;						
+
+			if (mo.name == name and mo.descr == descr ):
+				results['name']=name;
+				results['expected'] = True;
+				results['changed'] = False;
+				results['present'] = True;
+				#results['mo_bootpolicy'] = json.dumps(json.loads(jsonpickle.encode(mo)));
 
 
 			else:
-				try:
-					modified_mo =  MacpoolPool(parent_mo_or_dn="org-root", name=name, descr=descr)
-					if(to <> "" and r_from <> ""):
-						mo_1= MacpoolBlock(parent_mo_or_dn=modified_mo, to=to, r_from=r_from)					
-					ucs_handle.add_mo(modified_mo,True)
+		    		try:
+					mo = FirmwareComputeHostPack(parent_mo_or_dn="org-root", name=name, descr=descr)
+					ucs_handle.add_mo(mo, True)
 					ucs_handle.commit()
 					results['name']=name;
+					results['expected'] = False;
+					results['changed'] = True;
 					results['present'] = True;
-					results['removed'] = False;
-					results['changed'] = True
+					#results['mo_bootpolicy'] = json.dumps(json.loads(jsonpickle.encode(mo)));
 
-		   		except Exception,e:
-					print(e)
+
+		   		except Exception as e:
+					results['error'] = "Modification of host firmware package mo failed "+ str(e)
+					return results
 
 ###----------if not, create boot policy with desired config ----------------
 
 		else:
 			try:
-				mo =  MacpoolPool(parent_mo_or_dn="org-root", name=name, descr=descr)
-				if(to <> "" and r_from <> ""):			
-					mo_1= MacpoolBlock(parent_mo_or_dn=mo, to=to, r_from=r_from)
+				mo = FirmwareComputeHostPack(parent_mo_or_dn="org-root", name=name, descr=descr, override_default_exclusion="yes")
+				mo_1 = FirmwareExcludeServerComponent(parent_mo_or_dn=mo, server_component="local-disk")
 				ucs_handle.add_mo(mo)
 				ucs_handle.commit()
 				results['name']=name;
 				results['present'] = False;
 				results['created'] = True;
 				results['changed'] = True;
-
-
-			except:
-				print("Mac-pool creation failed")
+			except Exception as e:
+				results['error'] = "host firmware package creation failed "+str(e)
+				return results
 
 
 ###------if expected state is "absent"----------------------------
@@ -134,7 +115,8 @@ def mac_pool(input):
 				ucs_handle.commit()
 
 			except:
-				print("Removal Mac-pool mo failed")
+				results['error'] = "Removal of host firmware package mo failed" + str(e)
+				return results
 
 		else:
 			results['name']=name;
@@ -144,8 +126,9 @@ def mac_pool(input):
 	ucs_logout.main(ucs_handle)
 	return results
 def main():
-	json_input=json.loads(sys.argv[1])
-	results = mac_pool(json_input)
+	input = sys.argv[1]
+	json_input=json.loads(input)
+	results = host_firmware_package(json_input)
 	resultsjson=json.dumps(results)
 	print(resultsjson)
 	return resultsjson

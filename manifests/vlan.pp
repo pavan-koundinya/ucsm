@@ -5,5 +5,5 @@ default_net => "yes",
 ip => "172.31.219.215",
 username => "admin",
 password => "password",
-state => "absent",
+state => "present",
 }

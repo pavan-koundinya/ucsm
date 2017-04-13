@@ -1,6 +1,6 @@
 require 'json'
 
-Puppet::Type.type(:ucsm_bios_policy).provide :ruby do
+Puppet::Type.type(:ucsm_uuid_pool).provide :ruby do
  
   mk_resource_methods
   def handle
@@ -11,14 +11,15 @@ Puppet::Type.type(:ucsm_bios_policy).provide :ruby do
      param_obj[:username]=@resource[:username]
      param_obj[:password]=@resource[:password]
      param_obj[:descr] = @resource[:descr]
-     param_obj[:consistent_device_naming]=@resource[:consistent_device_naming]
+     param_obj[:to]=@resource[:to]
+     param_obj[:r_from]=@resource[:r_from]
      param_obj[:state]=@resource[:state]
      #converting object to JSON string
      json_object=JSON.dump param_obj.to_json
      #Call to the python script using puppet execute along with all the parameters 
      path = File.join(File.dirname(__FILE__), '..', '..', '..')
      current = Puppet::Util::Execution.execute(
-      "python #{path}/bios_policy.py #{json_object}",
+      "python #{path}/uuid_pool.py #{json_object}",
       :failonfail => true
     )
 Puppet.debug("#{current}")
@@ -48,10 +49,12 @@ def green(text); colorize(text, 32); end
      	param_obj[:ip]=@resource[:ip]
      	param_obj[:username]=@resource[:username]
      	param_obj[:password]=@resource[:password]
+        param_obj[:to]=@resource[:to]
+        param_obj[:r_from]=@resource[:r_from]
      	json_object=JSON.dump param_obj.to_json	
 	path = File.join(File.dirname(__FILE__), '..', '..', '..')
      	current = Puppet::Util::Execution.execute(
-      	"python #{path}/query_biospolicymo.py #{json_object}",
+      	"python #{path}/query_uuid_poolmo.py #{json_object}",
       	:failonfail => true
     	)
  	if(current.eql? "true")
@@ -82,7 +85,7 @@ def green(text); colorize(text, 32); end
 	json_object=JSON.dump param_obj.to_json
         path = File.join(File.dirname(__FILE__), '..', '..', '..')
         current = Puppet::Util::Execution.execute(
-        "python #{path}/biospolicyInstances.py #{json_object}",
+        "python #{path}/uuid_poolInstances.py #{json_object}",
         :failonfail => true
         )
   end

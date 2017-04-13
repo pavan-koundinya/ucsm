@@ -16,12 +16,14 @@
 
 DOCUMENTATION = '''
 ---
-module: biospolicyInstances
-short_description: Retrieve all instances of type bios policy.  
+module: hostFirmwarePackageInstances
+short_description: Retrieve all instances of type host firmware package. 
 
 description:
-  - Allows to retrieve all instances of bios policy type. Also retrieves consistent device naming object if it exists .
- 
+  - Queries the UCSPE to retrieve all instances of the host firmware package type.Returns a dictionary containing each host firmware package instance object as value .The value is again a dictionary that contains the current configuration.
+E.g
+{"1": {"name": "utility", "descr": "", "reboot_on_update": "no", "policy_owner": "local", "enforce_vnic_name": "no", "boot_mode": "legacy"}, "2": {"name": "default", "descr": "", "reboot_on_update": "no", "policy_owner": "local", "enforce_vnic_name": "no", "boot_mode": "legacy"}}
+
 version_added: "0.1.0"
 author: 
     - "Cisco UCS Team"
@@ -29,6 +31,11 @@ author:
 '''
 
 import sys
+from ucsmsdk.mometa.lsboot.LsbootPolicy import LsbootPolicy
+from ucsmsdk.mometa.lsboot.LsbootBootSecurity import LsbootBootSecurity
+from ucsmsdk.mometa.lsboot.LsbootLan import LsbootLan
+from ucsmsdk.mometa.lsboot.LsbootLanImagePath import LsbootLanImagePath
+from ucsmsdk.mometa.lsboot.LsbootSan import LsbootSan
 from ucsmsdk.ucshandle import UcsHandle
 import json
 import jsonpickle
@@ -37,7 +44,7 @@ import ucs_login
 import ucs_logout
 
 try_list={}
-def query_biospolicyInstances(input):
+def query_instance(input):
     ip=input['ip']
     username=input['username']
     password=input['password']
@@ -45,17 +52,13 @@ def query_biospolicyInstances(input):
     temp_dict_obj={}
     ucs_handle = pickle.loads(str(ucs_login.main(ip,username,password)))
     try:
-        mo = ucs_handle.query_classid("biosVProfile")
+        mo = ucs_handle.query_classid("firmwareComputeHostPack")
     except:
-	results['error'] = "Could not query children of org-root"
-        return results
+        print("Could not query children of org-root")
     if mo:
 	count=0
 	for obj in mo:
-            mo_children=ucs_handle.query_children(in_dn="org-root/bios-prof-"+obj.name,class_id="biosVfConsistentDeviceNameControl")
-
 	    count=count+1
-	    temp_dict_obj['consistent_device_naming']=mo_children[0].vp_cdn_control
 	    temp_dict_obj['name']=obj.name
 	    temp_dict_obj['descr']=obj.descr
 	    try_list[count]=temp_dict_obj
@@ -68,10 +71,11 @@ def query_biospolicyInstances(input):
 
 def main(): 
     json_input=json.loads(sys.argv[1])
-    results = query_biospolicyInstances(json_input)
+    results = query_instance(json_input)
     resultsjson=json.dumps(results)
     print(resultsjson)
     try_list={}
+    #return resultsjson
 
 if __name__ == '__main__':
     main()
