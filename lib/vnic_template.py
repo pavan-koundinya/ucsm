@@ -41,7 +41,7 @@ def vnic_template(input):
 	name = input['name']
 	descr=input['descr']
 	switch_id=input['switch_id']
-	redundancy_pair_type=input['redundancy_pair_type']
+	redundancy_pair_type="none"
 	templ_type= input['templ_type']
 	vlan_name=input['vlan_name']
 	default_net=input['default_net']
@@ -74,7 +74,6 @@ def vnic_template(input):
 		if(mo_block and mo_block.name ==vlan_name and mo_block.default_net ==default_net):
 				
 			block_temp=True
-			print("entering if")
 		elif (vlan_name == "" and not(mo_children)):
 			block_temp=True
 		elif (mo_children):
@@ -92,11 +91,7 @@ def vnic_template(input):
 
 			else:
 				try:
-					ucs_handle.remove_mo(mo)
-					ucs_handle.commit()
-					modified_mo =  VnicLanConnTempl(parent_mo_or_dn="org-root", name=name, descr=descr ,switch_id =switch_id , redundancy_pair_type = redundancy_pair_type ,
-					templ_type = templ_type , cdn_source = cdn_source , admin_cdn_name = admin_cdn_name , mtu =mtu ,
-					ident_pool_name = ident_pool_name )
+					modified_mo =  VnicLanConnTempl(parent_mo_or_dn="org-root", name=name, descr=descr ,switch_id =switch_id , redundancy_pair_type = redundancy_pair_type ,templ_type = templ_type , cdn_source = cdn_source , admin_cdn_name = admin_cdn_name , mtu =mtu ,ident_pool_name = ident_pool_name )
 					if(vlan_name):
 						mo_1= VnicEtherIf(parent_mo_or_dn=modified_mo,default_net=default_net, name=vlan_name)					
 					ucs_handle.add_mo(modified_mo,True)
@@ -124,7 +119,8 @@ def vnic_template(input):
 			    results['changed'] = True;
 
 			except:
-				print("Vnic template creation failed")
+			    results['error'] = "Vnic template creation failed"
+			    return results
 
 
 ###------if expected state is "absent"----------------------------

@@ -1,3 +1,4 @@
+
 #!/usr/bin/python
 # -*- mode: python -*-
 
@@ -16,12 +17,12 @@
 
 DOCUMENTATION = '''
 ---
-module: query_boot_policymo
-short_description: Checks if boot policy mo with the name exists.
+module: query_hostFirmwarePackage
+short_description: Queries UCSPE for a specific host firmware package managed object .Returns TRUE if object exists else returns FALSE.
 
 description:
-  - Allows to check if boot policy exists. If present, returns true else returns false.
- 
+  - Allows to check if vlan managed object exists. If host firmware package object with the name exists then the script returns TRUE else it returns FALSE.
+
 version_added: "0.1.0"
 author: 
     - "Cisco UCS Team"
@@ -29,11 +30,7 @@ author:
 '''
 
 import sys
-from ucsmsdk.mometa.lsboot.LsbootPolicy import LsbootPolicy
-from ucsmsdk.mometa.lsboot.LsbootBootSecurity import LsbootBootSecurity
-from ucsmsdk.mometa.lsboot.LsbootLan import LsbootLan
-from ucsmsdk.mometa.lsboot.LsbootLanImagePath import LsbootLanImagePath
-from ucsmsdk.mometa.lsboot.LsbootSan import LsbootSan
+from ucsmsdk.mometa.fabric.FabricVlan import FabricVlan
 from ucsmsdk.ucshandle import UcsHandle
 import json
 import jsonpickle
@@ -41,33 +38,18 @@ import pickle
 import ucs_login
 import ucs_logout
 
-def query_mo(input):
+def query_hostfirmwarepackage(input):
     name=input['name']
-    type=input['type']
-    device_name=input['device_name']
     ip=input['ip']
     username=input['username']
     password=input['password']
     exists=''
-    mo_children_exists=False
     ucs_handle = pickle.loads(str(ucs_login.main(ip,username,password)))
     try:
-        mo = ucs_handle.query_dn("org-root/boot-policy-"+name)
-	if(type == "LAN"):
-	    mo_children =ucs_handle.query_children(in_dn="org-root/boot-policy-"+name+"/lan",hierarchy=True)
-	    for obj in mo_children:
-	    	if(obj.vnic_name==device_name):
-		    mo_children_exists=True
-	elif(type == "LocalLun"):
-	    mo_children = ucs_handle.query_children(in_dn="org-root/boot-policy-"+name+"/storage/local-storage/local-hdd",hierarchy=True)
-	    for obj in mo_children:
-		if(obj.lun_name == device_name):
-		    mo_children_exists=True	    	
-    except Exception,e:
-	print(Exception)
-	print(e)
+        mo = ucs_handle.query_dn("org-root/fw-host-pack-"+name)
+    except:
         print("Could not query children of org-root")
-    if (mo and mo_children_exists):
+    if mo:
 	exists="true"
     else: 
 	exists="false"
@@ -78,7 +60,7 @@ def query_mo(input):
 def main():
     
     json_input=json.loads(sys.argv[1])
-    results = query_mo(json_input)
+    results = query_hostfirmwarepackage(json_input)
     resultsjson=results
     print(resultsjson)
     #return resultsjson

@@ -16,12 +16,14 @@
 
 DOCUMENTATION = '''
 ---
-module: query_boot_policymo
-short_description: Checks if boot policy mo with the name exists.
+module: hostFirmwarePackageInstances
+short_description: Retrieve all instances of type host firmware package. 
 
 description:
-  - Allows to check if boot policy exists. If present, returns true else returns false.
- 
+  - Queries the UCSPE to retrieve all instances of the host firmware package type.Returns a dictionary containing each host firmware package instance object as value .The value is again a dictionary that contains the current configuration.
+E.g
+{"1": {"name": "utility", "descr": "", "reboot_on_update": "no", "policy_owner": "local", "enforce_vnic_name": "no", "boot_mode": "legacy"}, "2": {"name": "default", "descr": "", "reboot_on_update": "no", "policy_owner": "local", "enforce_vnic_name": "no", "boot_mode": "legacy"}}
+
 version_added: "0.1.0"
 author: 
     - "Cisco UCS Team"
@@ -41,46 +43,38 @@ import pickle
 import ucs_login
 import ucs_logout
 
-def query_mo(input):
-    name=input['name']
-    type=input['type']
-    device_name=input['device_name']
+try_list={}
+def query_instance(input):
     ip=input['ip']
     username=input['username']
     password=input['password']
     exists=''
-    mo_children_exists=False
+    temp_dict_obj={}
     ucs_handle = pickle.loads(str(ucs_login.main(ip,username,password)))
     try:
-        mo = ucs_handle.query_dn("org-root/boot-policy-"+name)
-	if(type == "LAN"):
-	    mo_children =ucs_handle.query_children(in_dn="org-root/boot-policy-"+name+"/lan",hierarchy=True)
-	    for obj in mo_children:
-	    	if(obj.vnic_name==device_name):
-		    mo_children_exists=True
-	elif(type == "LocalLun"):
-	    mo_children = ucs_handle.query_children(in_dn="org-root/boot-policy-"+name+"/storage/local-storage/local-hdd",hierarchy=True)
-	    for obj in mo_children:
-		if(obj.lun_name == device_name):
-		    mo_children_exists=True	    	
-    except Exception,e:
-	print(Exception)
-	print(e)
+        mo = ucs_handle.query_classid("firmwareComputeHostPack")
+    except:
         print("Could not query children of org-root")
-    if (mo and mo_children_exists):
-	exists="true"
+    if mo:
+	count=0
+	for obj in mo:
+	    count=count+1
+	    temp_dict_obj['name']=obj.name
+	    temp_dict_obj['descr']=obj.descr
+	    try_list[count]=temp_dict_obj
+	    temp_dict_obj={}
     else: 
-	exists="false"
+	exists=""
     ucs_handle=pickle.dumps(ucs_handle)
     ucs_logout.main(ucs_handle)
-    return exists
+    return try_list
 
-def main():
-    
+def main(): 
     json_input=json.loads(sys.argv[1])
-    results = query_mo(json_input)
-    resultsjson=results
+    results = query_instance(json_input)
+    resultsjson=json.dumps(results)
     print(resultsjson)
+    try_list={}
     #return resultsjson
 
 if __name__ == '__main__':

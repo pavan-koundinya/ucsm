@@ -47,7 +47,8 @@ def query_biospolicyInstances(input):
     try:
         mo = ucs_handle.query_classid("biosVProfile")
     except:
-        print("Could not query children of org-root")
+	results['error'] = "Could not query children of org-root"
+        return results
     if mo:
 	count=0
 	for obj in mo:

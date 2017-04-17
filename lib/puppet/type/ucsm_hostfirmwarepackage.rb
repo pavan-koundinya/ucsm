@@ -1,20 +1,20 @@
-Puppet::Type.newtype(:ucsm_bios_policy) do
-  desc "Puppet type that manages macpool object"
+require 'ipaddr'
+Puppet::Type.newtype(:ucsm_hostfirmwarepackage) do
+  desc "Puppet type that manages boot policy object"
   ensurable
   newparam(:typename ,:namevar => true) do
-	desc "namevar for puppet object"
+        desc "namevar for puppet object"
   end
 
   newproperty(:ip) do
 	desc "The IP address of the ucspe server"
-        validate do |value|
-          begin
-            ip = IPAddr.new "%s" % value
-          rescue Exception
-                raise  ArgumentError, "%s is not a valid IP address" % value
-          end
-        end
-
+	validate do |value|
+	  begin
+	    ip = IPAddr.new "%s" % value
+	  rescue Exception
+		raise  ArgumentError, "%s is not a valid IP address" % value
+	  end
+	end	  
   end
 
   newproperty(:username) do
@@ -34,24 +34,15 @@ Puppet::Type.newtype(:ucsm_bios_policy) do
   newproperty(:policy_name) do
     desc "The name of the managed object(This is with respect to ucspe)"
         validate do |value|
-          if value.length > 16
+          if value.length > 16 
             raise  ArgumentError, "The policy name exceeds maximum character length of 16"
           end
         end
-
   end
 
+  
   newproperty(:descr) do
-    desc "The description of the managed object"
-  end
-
-  newproperty(:consistent_device_naming) do
-    desc "Device naming set to either enabled/disabled/platform-default"
-    validate do |value|
-          if !(value.to_s.strip == "enabled" or value.to_s.strip == "disabled" or value.to_s.strip == "platform-default")
-            raise  ArgumentError, "The device naming can have only enabled/disabled/platform-default values "
-          end
-        end
+    desc "The name of the Local LUN Image Path"
   end
 
   newproperty(:state) do
@@ -60,15 +51,13 @@ Puppet::Type.newtype(:ucsm_bios_policy) do
     newvalue(:absent)
   end
 
-  validate do
+  validate do 
     fail ("The 'IP address' parameter must be set in the manifest.") if self[:ip].to_s.strip.empty?
     fail ("The 'Policy name' parameter must be set in the manifest.") if self[:policy_name].to_s.strip.empty?
     fail ("The 'state' parameter must be set in the manifest.") if self[:state].to_s.strip.empty?
-    fail ("The 'username' parameter must be set in the manifest.") if self[:username].to_s.strip.empty?
+    fail ("The 'username' parameter must be set in the manifest.") if self[:username].to_s.strip.empty? 
     fail ("The 'password' parameter must be set in the manifest.") if self[:password].to_s.strip.empty?
-    fail ("The 'Consistent device naming' parameter must be set in the manifest.") if self[:consistent_device_naming].to_s.strip.empty?  
-end
-
+  end
 
 end
 

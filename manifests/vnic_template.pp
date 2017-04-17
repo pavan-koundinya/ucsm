@@ -1,19 +1,18 @@
 ucsm_vnic_template {"vnicLanConnTempl":
 policy_name =>"puppetdslmo",
-descr => "abd40",
-switch_id =>"A-B",
-redundancy_pair_type => "none",
+descr => "abd4",
+switch_id =>"A",
 templ_type => "updating-template",
-vlan_name => "default",
-default_net =>"yes",
+vlan_name => "abcd",
+default_net =>"",
 cdn_source => "user-defined",
-admin_cdn_name =>"cdnname",
-mtu => "1500",
-ident_pool_name => "abcd",
+admin_cdn_name =>"cdnnam",
+mtu => "1600",
+ident_pool_name => "",
 ip => "172.31.219.215",
 username => "admin",
 password => "password",
-state => "absent",
+state => "present",
 
 
 }

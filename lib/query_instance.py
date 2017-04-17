@@ -48,6 +48,7 @@ def query_instance(input):
     ip=input['ip']
     username=input['username']
     password=input['password']
+    type=input['type']
     exists=''
     temp_dict_obj={}
     ucs_handle = pickle.loads(str(ucs_login.main(ip,username,password)))
@@ -58,15 +59,66 @@ def query_instance(input):
     if mo:
 	count=0
 	for obj in mo:
-	    count=count+1
-	    temp_dict_obj['name']=obj.name
-	    temp_dict_obj['descr']=obj.descr
-            temp_dict_obj['reboot_on_update']=obj.reboot_on_update
-            temp_dict_obj['policy_owner']=obj.policy_owner
-            temp_dict_obj['enforce_vnic_name']=obj.enforce_vnic_name
-            temp_dict_obj['boot_mode']=obj.boot_mode
-	    try_list[count]=temp_dict_obj
-	    temp_dict_obj={}
+	    te="org-root/boot-policy-"+obj.name
+	    if(type=="LocalLun"):
+		te='"'+te+'"'	
+		filter_string=str('(dn,'+te+')')
+		filter_string=str(filter_string)
+		my=ucs_handle.query_classid(filter_str=filter_string,hierarchy=True,class_id="lsbootLocalLunImagePath")
+		if(len(my)>0):
+		    temp_mo_obj=ucs_handle.query_classid(filter_str=filter_string,class_id="lsbootLocalHddImage")
+		    order=temp_mo_obj[0].order
+		    for obj1 in my:
+		    	temp_dict_obj['name']=obj.name
+                    	temp_dict_obj['order']=order
+                    	temp_dict_obj['device_name']=obj1.lun_name
+                    	temp_dict_obj['type']=type
+		    	try_list[count]=temp_dict_obj
+			temp_dict_obj={}
+			count=count+1
+		else:
+                        temp_dict_obj['name']=obj.name
+                        temp_dict_obj['order']=""
+                        temp_dict_obj['device_name']=""
+                        temp_dict_obj['type']=type
+                        try_list[count]=temp_dict_obj
+                        temp_dict_obj={}
+                        count=count+1
+
+	    elif(type=="LAN"):
+		
+                te='"'+te+'"'
+                filter_string=str('(dn,'+te+')')
+                filter_string=str(filter_string)
+                my=ucs_handle.query_classid(filter_str=filter_string,hierarchy=True,class_id="lsbootLanImagePath")
+		if(len(my)>0):
+                    temp_mo_obj=ucs_handle.query_classid(filter_str=filter_string,class_id="lsbootLan")
+                    order=temp_mo_obj[0].order
+                    for obj1 in my:
+		    	temp_dict_obj['name']=obj.name
+                    	temp_dict_obj['order']=order
+                    	temp_dict_obj['device_name']=obj1.vnic_name
+                    	temp_dict_obj['type']=type
+                    	try_list[count]=temp_dict_obj
+                        temp_dict_obj={}
+			count=count+1
+		else:
+                        temp_dict_obj['name']=obj.name
+                        temp_dict_obj['order']=""
+                        temp_dict_obj['device_name']=""
+                        temp_dict_obj['type']=type
+                        try_list[count]=temp_dict_obj
+                        temp_dict_obj={}
+                        count=count+1
+	    else:
+		temp_dict_obj['name']=obj.name
+		temp_dict_obj['order']=""
+		temp_dict_obj['device_name']=""
+		temp_dict_obj['type']=""
+		try_list[count]=temp_dict_obj
+		temp_dict_obj={}
+		count=count+1
+		
     else: 
 	exists=""
     ucs_handle=pickle.dumps(ucs_handle)
