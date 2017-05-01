@@ -1,5 +1,5 @@
 ucsm_macpool{'macpoolPool':
-policy_name => "pretest",
+policy_name => "macpool12",
 descr =>"em",
 to => "00:25:B5:00:00:14",
 r_from => "00:25:B5:00:00:12",
