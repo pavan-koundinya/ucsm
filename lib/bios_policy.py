@@ -86,7 +86,7 @@ def bios_policy(input):
 		mo_block=ucs_handle.query_dn("org-root/bios-prof-"+name+"/Consistent-Device-Name-Control")
 	except:
 		results['error'] = "Could not query children of bios_policy"
-		retrun results
+		return results
 
 
 ###----if expected state is "present"------------------------
