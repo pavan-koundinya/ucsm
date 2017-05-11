@@ -31,7 +31,6 @@ author:
 import sys
 from ucsmsdk.ucshandle import UcsHandle
 import json
-import jsonpickle
 import pickle
 import ucs_login
 import ucs_logout
@@ -81,8 +80,7 @@ def query_storage_profile_mo(input):
 	return exists
 
 def main():
-    input = '{"ip":"172.31.219.215","username":"admin","password":"password","name":"pytest9","local_lun_list":[{"name":"Boot-Lun","size":"20","disk_group_configuration_name":"pte88","slot_number":["1","2"]},{"name":"PXE-Lon","size":"20","disk_group_configuration_name":"pq1245","slot_number":["1","2"]},{"name":"qwertt","size":"40","disk_group_configuration_name":"","slot_number":[]}]}'
-    json_input=json.loads(input)
+    json_input=json.loads(sys.argv[1])
     results = query_storage_profile_mo(json_input)
     resultsjson=results
     print(resultsjson)
