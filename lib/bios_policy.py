@@ -87,13 +87,10 @@ def bios_policy(input):
 	except:
 		results['error'] = "Could not query children of bios_policy"
 		return results
-
-
 ###----if expected state is "present"------------------------
 
 	if state == "present":
 		if mo:
-
 			if (mo.name == name and mo.descr == descr and mo_block.vp_cdn_control == consistent_device_naming ):
 				results['name']=name;
 				results['expected'] = True;
