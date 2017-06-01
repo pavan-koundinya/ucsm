@@ -33,7 +33,6 @@ from ucsmsdk.mometa.compute.ComputePool import ComputePool
 from ucsmsdk.mometa.compute.ComputePooledSlot import ComputePooledSlot
 from ucsmsdk.ucshandle import UcsHandle
 import json
-import jsonpickle
 import pickle
 import ucs_login
 import ucs_logout

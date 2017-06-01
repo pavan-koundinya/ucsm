@@ -715,7 +715,6 @@ def sp_template_exists(input):
 		
 	
 import json
-import jsonpickle
 import pickle
 import ucs_login
 import ucs_logout

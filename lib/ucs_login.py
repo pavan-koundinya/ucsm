@@ -3,7 +3,6 @@
 from ucsmsdk.ucshandle import UcsHandle
 import json
 import sys
-import jsonpickle
 import pickle
 class ucs_login:
     def ucs_login(self,ip,username,password):

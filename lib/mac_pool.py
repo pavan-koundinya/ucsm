@@ -33,7 +33,6 @@ from ucsmsdk.mometa.macpool.MacpoolPool import MacpoolPool
 from ucsmsdk.mometa.macpool.MacpoolBlock import MacpoolBlock
 from ucsmsdk.ucshandle import UcsHandle
 import json
-import jsonpickle
 import pickle
 import ucs_login
 import ucs_logout

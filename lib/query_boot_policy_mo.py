@@ -37,7 +37,6 @@ from ucsmsdk.mometa.lsboot.LsbootLanImagePath import LsbootLanImagePath
 from ucsmsdk.mometa.lsboot.LsbootSan import LsbootSan
 from ucsmsdk.ucshandle import UcsHandle
 import json
-import jsonpickle
 import pickle
 import ucs_login
 import ucs_logout

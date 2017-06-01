@@ -33,7 +33,6 @@ from ucsmsdk.mometa.vnic.VnicLanConnTempl import VnicLanConnTempl
 from ucsmsdk.mometa.vnic.VnicEtherIf import VnicEtherIf
 from ucsmsdk.ucshandle import UcsHandle
 import json
-import jsonpickle
 import pickle
 import ucs_login
 import ucs_logout
