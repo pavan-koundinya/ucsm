@@ -33,7 +33,6 @@ from ucsmsdk.mometa.firmware.FirmwareComputeHostPack import FirmwareComputeHostP
 from ucsmsdk.mometa.firmware.FirmwareExcludeServerComponent import FirmwareExcludeServerComponent
 from ucsmsdk.ucshandle import UcsHandle
 import json
-import jsonpickle
 import pickle
 import ucs_login
 import ucs_logout

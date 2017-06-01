@@ -36,7 +36,6 @@ from ucsmsdk.mometa.lstorage.LstorageProfile import LstorageProfile
 from ucsmsdk.mometa.lstorage.LstorageDasScsiLun import LstorageDasScsiLun
 from ucsmsdk.ucshandle import UcsHandle
 import json
-import jsonpickle
 import pickle
 import ucs_login
 import ucs_logout

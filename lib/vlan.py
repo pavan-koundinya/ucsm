@@ -32,7 +32,6 @@ import sys
 from ucsmsdk.mometa.fabric.FabricVlan import FabricVlan
 from ucsmsdk.ucshandle import UcsHandle
 import json
-import jsonpickle
 import pickle
 import ucs_login
 import ucs_logout

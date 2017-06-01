@@ -33,7 +33,6 @@ author:
 import sys
 from ucsmsdk.ucshandle import UcsHandle
 import json
-import jsonpickle
 import pickle
 import ucs_login
 import ucs_logout

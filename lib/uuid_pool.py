@@ -33,7 +33,6 @@ from ucsmsdk.mometa.uuidpool.UuidpoolPool import UuidpoolPool
 from ucsmsdk.mometa.uuidpool.UuidpoolBlock import UuidpoolBlock
 from ucsmsdk.ucshandle import UcsHandle
 import json
-import jsonpickle
 import pickle
 import ucs_login
 import ucs_logout
