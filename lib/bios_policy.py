@@ -65,7 +65,6 @@ from ucsmsdk.mometa.bios.BiosVfEnergyPerformanceTuning import BiosVfEnergyPerfor
 from ucsmsdk.mometa.bios.BiosVfWorkloadConfiguration import BiosVfWorkloadConfiguration
 from ucsmsdk.ucshandle import UcsHandle
 import json
-import jsonpickle
 import pickle
 import ucs_login
 import ucs_logout
@@ -86,14 +85,11 @@ def bios_policy(input):
 		mo_block=ucs_handle.query_dn("org-root/bios-prof-"+name+"/Consistent-Device-Name-Control")
 	except:
 		results['error'] = "Could not query children of bios_policy"
-		retrun results
-
-
+		return results
 ###----if expected state is "present"------------------------
 
 	if state == "present":
 		if mo:
-
 			if (mo.name == name and mo.descr == descr and mo_block.vp_cdn_control == consistent_device_naming ):
 				results['name']=name;
 				results['expected'] = True;

@@ -16,7 +16,7 @@
 
 DOCUMENTATION = '''
 ---
-module: macpoolInstances
+module: diskgrouppolicyInstances
 short_description: Retrieves all instances of type mac pool.
 
 description:
@@ -37,60 +37,45 @@ import pickle
 import ucs_login
 import ucs_logout
 
-final_dict= {}
 try_list={}
-def query_storageprofileInstances(input):
+def query_diskgrouppolicyInstances(input):
 	ip=input['ip']
 	username=input['username']
 	password=input['password']
 	exists=''
 	temp_dict_obj={}
+	temp_list=[]
 	ucs_handle = pickle.loads(str(ucs_login.main(ip,username,password)))
 	try:
-		mo = ucs_handle.query_classid("lstorageProfile")
+		mo = ucs_handle.query_classid("lstorageDiskGroupConfigPolicy")
 	except:
 		print("Could not query children of org-root")
 	if mo:
 		count=0
 		for obj in mo:
-			count = count+1
-			try_list['name'] = obj.name
-			mo_children=ucs_handle.query_children(in_dn="org-root/profile-"+obj.name,class_id="lstorageDasScsiLun")
+			mo_children=ucs_handle.query_children(in_dn="org-root/disk-group-config-"+obj.name,class_id="lstorageLocalDiskConfigRef")
 			if(mo_children):
-				temp_list=[]
-				local_lun_dict={}
-				for mo_children_object in mo_children:
-					local_lun_dict['name'] = mo_children_object.name
-					local_lun_dict['size'] = mo_children_object.size
-					temp1 =str(mo_children_object.oper_local_disk_policy_name)
-					if(temp1 != ""):
-						mo_disk_group_policy = ucs_handle.query_dn(temp1)
-						if(mo_disk_group_policy):
-							local_lun_dict['disk_group_configuration_name'] = mo_disk_group_policy.name
-							local_lun_dict['slot_number'] = []
-						else:
-							local_lun_dict['disk_group_configuration_name'] = ""
-							local_lun_dict['slot_number'] = []	
-					else:
-						local_lun_dict['disk_group_configuration_name'] = ""
-						local_lun_dict['slot_number'] = []	
-					temp_list.append(local_lun_dict)
-					local_lun_dict = {}
-				try_list['local_lun_list'] = temp_list
-				#print(try_list)
-			else:
-				try_list['local_lun_list'] = []	
-			final_dict[count] = try_list
+				for object in mo_children:
+					temp_list.append(object.slot_num)	
+			count=count+1
+			temp_dict_obj['name']=obj.name
+			temp_dict_obj['raid_level']=obj.raid_level
+			temp_dict_obj['slot_numbers']=temp_list
+			try_list[count]=temp_dict_obj
+			temp_list=[]
+			temp_dict_obj={}
+
 	ucs_handle=pickle.dumps(ucs_handle)
 	ucs_logout.main(ucs_handle)
-	return final_dict
+	return try_list
 
 def main(): 
-    json_input=json.loads(sys.argv[1])
-    results = query_storageprofileInstances(json_input)
-    resultsjson=json.dumps(results)
-    print(resultsjson)
-    final_dict={}
+	
+	json_input=json.loads(sys.argv[1])
+	results = query_diskgrouppolicyInstances(json_input)
+	resultsjson=json.dumps(results)
+	print(resultsjson)
+	try_list={}
     #return resultsjson
 
 if __name__ == '__main__':
