@@ -3,7 +3,6 @@
 from ucsmsdk.ucshandle import UcsHandle
 import json
 import sys
-import jsonpickle
 import pickle
 class ucs_login:
     def ucs_login(self,ip,username,password):
@@ -23,9 +22,6 @@ def main(ip,username,password):
     loginInstance=ucs_login()
     handle = loginInstance.ucs_login(ip,username,password)
     ucs_handle=pickle.dumps(handle)
-    #handle.logout()
-    #print("Logged out successfully")
-    #print(type(ucs_handle))
     return ucs_handle
 if __name__ == '__main__':
     main()

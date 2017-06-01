@@ -34,7 +34,6 @@ from ucsmsdk.mometa.lstorage.LstorageVirtualDriveDef import LstorageVirtualDrive
 from ucsmsdk.mometa.lstorage.LstorageLocalDiskConfigRef import LstorageLocalDiskConfigRef
 from ucsmsdk.ucshandle import UcsHandle
 import json
-import jsonpickle
 import collections
 import pickle
 import ucs_login

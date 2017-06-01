@@ -38,7 +38,6 @@ from ucsmsdk.mometa.lsboot.LsbootLocalHddImage import LsbootLocalHddImage
 from ucsmsdk.mometa.lsboot.LsbootLocalLunImagePath import LsbootLocalLunImagePath
 from ucsmsdk.ucshandle import UcsHandle
 import json
-import jsonpickle
 import pickle
 import ucs_login
 import ucs_logout

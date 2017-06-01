@@ -25,7 +25,7 @@ description:
 version_added: "0.1.0"
 author: 
     - "Cisco UCS Team"
-    - "Jyotsna Venkatesh"
+    - "Pavan Koundinya"
 '''
 
 EXAMPLES = '''
@@ -53,7 +53,6 @@ from ucsmsdk.mometa.lsboot.LsbootLanImagePath import LsbootLanImagePath
 from ucsmsdk.mometa.lsboot.LsbootSan import LsbootSan
 from ucsmsdk.ucshandle import UcsHandle
 import json
-import jsonpickle
 import pickle
 import ucs_login
 import ucs_logout
@@ -231,8 +230,8 @@ def boot_lan_vnic(input):
     return results
 
 def main():
-    input='{"name":"bootlandemo","vnic_name":"qwerty","state" :"present","ip":"172.31.219.215","username":"admin","password":"password"}'
-    json_input=json.loads(input)
+    #input='{"name":"bootlandemo","vnic_name":"qwerty","state" :"present","ip":"172.31.219.215","username":"admin","password":"password"}'
+    json_input=json.loads(sys.argv[1])
     results = boot_lan_vnic(json_input)
     resultsjson=json.dumps(results)
     print(resultsjson)

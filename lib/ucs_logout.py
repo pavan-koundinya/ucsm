@@ -16,7 +16,6 @@
 
 from ucsmsdk.ucshandle import UcsHandle
 import json
-import jsonpickle
 import ucs_login
 import pickle
 
