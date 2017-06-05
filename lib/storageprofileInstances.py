@@ -67,13 +67,12 @@ def query_storageprofileInstances(input):
 						mo_disk_group_policy = ucs_handle.query_dn(temp1)
 						if(mo_disk_group_policy):
 							local_lun_dict['disk_group_configuration_name'] = mo_disk_group_policy.name
-							local_lun_dict['slot_number'] = []
 						else:
 							local_lun_dict['disk_group_configuration_name'] = ""
-							local_lun_dict['slot_number'] = []	
+							
 					else:
 						local_lun_dict['disk_group_configuration_name'] = ""
-						local_lun_dict['slot_number'] = []	
+							
 					temp_list.append(local_lun_dict)
 					local_lun_dict = {}
 				try_list['local_lun_list'] = temp_list
@@ -86,12 +85,12 @@ def query_storageprofileInstances(input):
 	return final_dict
 
 def main(): 
-    json_input=json.loads(sys.argv[1])
-    results = query_storageprofileInstances(json_input)
-    resultsjson=json.dumps(results)
-    print(resultsjson)
-    final_dict={}
-    #return resultsjson
+	json_input=json.loads(sys.argv[1])
+	results = query_storageprofileInstances(json_input)
+	resultsjson=json.dumps(results)
+	print(resultsjson)
+	final_dict={}
+	#return resultsjson
 
 if __name__ == '__main__':
     main()

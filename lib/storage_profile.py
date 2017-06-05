@@ -62,40 +62,23 @@ def local_lun_modify(ucs_handle,parent_mo,local_lun_obj):
 		if(local_lun_obj['disk_group_configuration_name'] <> ""):
 			mo_disk = ucs_handle.query_dn("org-root/disk-group-config-" +local_lun_obj['disk_group_configuration_name'])
 			if (mo_disk == None):
+				results['error'] = "The given disk group configuration does not exist "
+			else:
 				try:
-					mo = LstorageDiskGroupConfigPolicy(parent_mo_or_dn="org-root", raid_level="mirror", name=local_lun_obj['disk_group_configuration_name'])
-					mo_1 = LstorageVirtualDriveDef(parent_mo_or_dn=mo, read_policy="platform-default", drive_cache="platform-default", strip_size="platform-default", io_policy="platform-default", write_cache_policy="platform-default", access_policy="platform-default")
-					if(len(local_lun_obj['slot_number']) <> 0 ):
-						temp_count=0
-						for index in local_lun_obj['slot_number']:
-							mo_dynamic = "mo"+str(temp_count)
-							mo_dynamic = LstorageLocalDiskConfigRef(parent_mo_or_dn=mo, slot_num=index)
-							temp_count+=1
-					ucs_handle.add_mo(mo)
+					mo = LstorageDasScsiLun(parent_mo_or_dn=parent_mo, local_disk_policy_name=local_lun_obj['disk_group_configuration_name'], name=local_lun_obj['name'])
+					ucs_handle.add_mo(mo, True)
 					ucs_handle.commit()
-				except Exception as e:
-					results['error'] = "Could not create disk group policy "+str(e)
+				except Exception as e :
+					results["error"] = "Could not modify Local Lun object"+str(e)
 	else:
 		try:
 			if(local_lun_obj['disk_group_configuration_name'] <> ""):
 				mo_disk = ucs_handle.query_dn("org-root/disk-group-config-" +local_lun_obj['disk_group_configuration_name'])
 				if (mo_disk == None):
-					try:
-						mo = LstorageDiskGroupConfigPolicy(parent_mo_or_dn="org-root", raid_level="mirror", name=local_lun_obj['disk_group_configuration_name'])
-						mo_1 = LstorageVirtualDriveDef(parent_mo_or_dn=mo, read_policy="platform-default", drive_cache="platform-default", strip_size="platform-default", io_policy="platform-default", write_cache_policy="platform-default", access_policy="platform-default")
-						if(len(local_lun_obj['slot_number']) <> 0 ):
-							temp_count=0
-							for index in local_lun_obj['slot_number']:
-								mo_dynamic = "mo"+str(temp_count)
-								mo_dynamic = LstorageLocalDiskConfigRef(parent_mo_or_dn=mo, slot_num=index)
-								temp_count+=1
-						ucs_handle.add_mo(mo)
-						ucs_handle.commit()
-					except Exception as e:
-						results['error'] = "Could not create disk group policy "+str(e)
-				mo_1 = LstorageDasScsiLun(parent_mo_or_dn=parent_mo, local_disk_policy_name=local_lun_obj['disk_group_configuration_name'], name=local_lun_obj['name'], size=local_lun_obj['size'])
-				ucs_handle.add_mo(mo_1)
-				ucs_handle.commit()
+					results['error'] = "The given disk group configuration does not exist "+str(e)
+			mo_1 = LstorageDasScsiLun(parent_mo_or_dn=parent_mo, local_disk_policy_name=local_lun_obj['disk_group_configuration_name'], name=local_lun_obj['name'], size=local_lun_obj['size'])
+			ucs_handle.add_mo(mo_1)
+			ucs_handle.commit()
 		except Exception as e:
 			results['error'] = "Modification of local lun failed as "+str(e)
 
@@ -178,23 +161,6 @@ def storage_profile(input):
 			try:
 				parent_mo = LstorageProfile(parent_mo_or_dn="org-root", name=name)
 				if(len(local_lun_list) <> 0 ):
-					for object in local_lun_list :
-						if(object['disk_group_configuration_name'] <> ""):
-							mo_disk = ucs_handle.query_dn("org-root/disk-group-config-" +object['disk_group_configuration_name']) 
-							if (mo_disk == None):
-								try:
-									mo = LstorageDiskGroupConfigPolicy(parent_mo_or_dn="org-root", raid_level="mirror", name=object['disk_group_configuration_name'])
-									mo_1 = LstorageVirtualDriveDef(parent_mo_or_dn=mo, read_policy="platform-default", drive_cache="platform-default", strip_size="platform-default", io_policy="platform-default", write_cache_policy="platform-default", access_policy="platform-default")
-									if(len(object['slot_number']) <> 0):
-										count=0
-										mo_dynamic ="mo"+str(count)
-										for index in object['slot_number']:
-											mo_dynamic = LstorageLocalDiskConfigRef(parent_mo_or_dn=mo, slot_num=index)
-											count+=1
-									ucs_handle.add_mo(mo)
-									ucs_handle.commit()
-								except Exception as e:
-									results['error'] = "Could not creat Disk group policy "+str(e)
 					for object in local_lun_list :	
 
 						mo_1 = LstorageDasScsiLun(parent_mo_or_dn=parent_mo, local_disk_policy_name=object['disk_group_configuration_name'], name=object['name'], size=object['size'])
@@ -235,8 +201,7 @@ def storage_profile(input):
 	ucs_logout.main(ucs_handle)
 	return results
 def main():
-	input=sys.argv[1]
-	json_input=json.loads(input)
+	json_input=json.loads(sys.argv[1])
 	results = storage_profile(json_input)
 	resultsjson=json.dumps(results)
 	print(resultsjson)
