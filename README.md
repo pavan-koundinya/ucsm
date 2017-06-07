@@ -8,9 +8,10 @@
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
 
-## Description
+## Module-Description
 Cisco ucsm_dockerdc_puppet module allows administrators to automate all aspects of Cisco UCS management including server, network, storage and hypervisor management. Bulk of the Cisco ucsm_dockerdc_puppet module work on the UCS Manager’s Management Information Tree (MIT), performing create, modify or delete actions on the Managed Objects (MO) in the tree. 
 The resources and capabilities provided by this Puppet Module will grow with contributions from Cisco, Puppet Labs and the open source community.
+
 ##### Dependencies
 
 The ucsm_dockerdc_puppet module has a dependency on the ucsmsdk python library. See the Setup section that follows for more information on ucsmsdk.
@@ -34,16 +35,12 @@ The ucsm_dockerdc_puppet module must be cloned on the Puppet Master server. We r
   
 To install pip package installer use the following commands.
    - ``` 
-   curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
-   ```
+   curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py```
    - ``` 
-   python get-pip.py
-   ```
+   python get-pip.py```
 After pip is installed successfully install the ucsmsdk package using the following command.
    - ```
-   pip install ucsmsdk
-   
-   ```
+   pip install ucsmsdk```
    
    
 
@@ -54,7 +51,7 @@ Software version Dependencies
    
 
 
-## Example Manifests
+## Example-Manifests
 
 ##### Bios Policy example manifest:
 The following example demonstrates how to define a manifest that uses ucsm_dockerdc_puppet module  to configure bios policy on a Cisco UCS.
@@ -99,7 +96,8 @@ ip => "IP address of the UCS server",
 username => "",
 password => "",
 state => "present",
-}```
+}
+```
 
 ###### Description of parameters :
 
@@ -131,7 +129,8 @@ The following example demonstrates how to define a manifest that uses ucsm_docke
         ip => "the IP address of the UCS server",
         username => "",
         password => "",
-}```
+}
+```
 
 ###### Description of parameters :
 
@@ -165,7 +164,8 @@ ip => "IP address of UCS server",
 username => "",
 password => "",
 state => "present",
-}```
+}
+```
 
 ###### Description of parameters :
 
@@ -199,7 +199,8 @@ ip => "IP address of UCS Server",
 username => "",
 password => "",
 state => "present",
-}```
+}
+```
 
 ###### Description of parameters :
 
@@ -232,7 +233,8 @@ ip => "",
 username => "",
 password => "",
 state => "present",
-}```
+}
+```
 
 ###### Description of parameters :
 
@@ -265,7 +267,8 @@ The following example demonstrates how to define a manifest that uses ucsm_docke
         ip => "",
         username => "",
         password => "",
-}```
+}
+```
 
 Description of parameters :
 
@@ -294,7 +297,8 @@ ip => "",
 username => "",
 password => "",
 state => "",
-}```
+}
+```
 
 ###### Description of parameters :
 
@@ -332,7 +336,8 @@ ip => "172.28.224.121",
 username => "admin",
 password => "password",
 state => "present",
-}```
+}
+```
 
 ###### Description of parameters :
 
@@ -376,7 +381,8 @@ ip => "",
 username => "",
 password => "",
 state => "present",
-}```
+}
+```
 
 ###### Description of parameters :
 
@@ -420,7 +426,8 @@ ip => "",
 username => "",
 password => "",
 state => "present",
-}```
+}
+```
 
 ###### Description of parameters :
 
