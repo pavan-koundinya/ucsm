@@ -34,13 +34,10 @@ The ucsm_dockerdc_puppet module must be cloned on the Puppet Master server. We r
    ``` 
   
 To install pip package installer use the following commands.
-   - ``` 
-   curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py```
-   - ``` 
-   python get-pip.py```
+   - ``` curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py ```
+   - ``` python get-pip.py  ```
 After pip is installed successfully install the ucsmsdk package using the following command.
-   - ```
-   pip install ucsmsdk```
+   - ```pip install ucsmsdk  ```
    
    
 
@@ -56,7 +53,8 @@ Software version Dependencies
 ##### Bios Policy example manifest:
 The following example demonstrates how to define a manifest that uses ucsm_dockerdc_puppet module  to configure bios policy on a Cisco UCS.
 
-```ucsm_bios_policy{'biosVProfile':                                                                              
+```
+ucsm_bios_policy{'biosVProfile':                                                                              
 policy_name => "Docker-BiosPol",                                                                                   
 descr =>"",                                                                                              
 consistent_device_naming => "enabled",                                                                       
@@ -88,7 +86,8 @@ state => This parameter ensures whether the policy should be present or absent o
 ##### Vlan example manifest :
 The following example demonstrates how to define a manifest that uses ucsm_dockerdc_puppet module  to configure Vlan on a Cisco UCS.
 
-```ucsm_vlan{'fabricVlan':
+```
+ucsm_vlan{'fabricVlan':
 policy_name => "vlan603",
 id => "603",
 default_net => "yes",
@@ -120,7 +119,8 @@ state => This parameter ensures whether the policy should be present or absent o
 ##### Boot Policy example manifest :
 The following example demonstrates how to define a manifest that uses ucsm_dockerdc_puppet module  to configure boot policy on a Cisco UCS.
 
-```ucsm_boot_policy{'PXE-Local-Boot':
+```
+ucsm_boot_policy{'PXE-Local-Boot':
         policy_name => "Docker-LocalBoot",
         order => "1",
         device_name => "Boot-Lun",
@@ -155,7 +155,8 @@ state => This parameter ensures whether the policy should be present or absent o
 ##### Macpool example manifest :
 The following example demonstrates how to define a manifest that uses ucsm_dockerdc_puppet module  to configure mac pool on a Cisco UCS.
 
-```ucsm_macpool{'macpoolPool':
+```
+ucsm_macpool{'macpoolPool':
 policy_name => "macpool12",
 descr =>"em",
 to => "00:25:B5:00:00:14",
@@ -190,7 +191,8 @@ state => This parameter ensures whether the policy should be present or absent o
 ##### Uuidpool example manifest :
 The following example demonstrates how to define a manifest that uses ucsm_dockerdc_puppet module  to configure uuid pool on a Cisco UCS.
 
-```ucsm_uuid_pool{'Pool':
+```
+ucsm_uuid_pool{'Pool':
 policy_name => "uuidPool1",
 descr =>"",
 to => "0000-000000000009",
@@ -225,7 +227,8 @@ state => This parameter ensures whether the policy should be present or absent o
 ##### Disk group configuration policy example manifest :
 The following example demonstrates how to define a manifest that uses ucsm_dockerdc_puppet module  to configure disk group configuration policy on Cisco UCS.
 
-```ucsm_disk_group_policy{'diskgroupconfiguration':
+```
+ucsm_disk_group_policy{'diskgroupconfiguration':
 policy_name => "",
 slot_numbers => ["1","2","3","4","5","6"],
 raid_level => "stripe-parity",
@@ -260,7 +263,8 @@ state => This parameter ensures whether the policy should be present or absent o
 ##### Host firmware package example manifest :
 The following example demonstrates how to define a manifest that uses ucsm_dockerdc_puppet module  to configure Host firmware package on Cisco UCS.
 
-```ucsm_hostfirmwarepackage{'firmwareComputeHostPack':
+```
+ucsm_hostfirmwarepackage{'firmwareComputeHostPack':
         policy_name => "package",
         descr => "",
         state => "present",
@@ -289,7 +293,8 @@ state => This parameter ensures whether the policy should be present or absent o
 ##### Server pool example manifest :
 The following example demonstrates how to define a manifest that uses ucsm_dockerdc_puppet module  to configure server pool on Cisco UCS.
 
-```ucsm_serverpool{'ComputePool':
+```
+ucsm_serverpool{'ComputePool':
 policy_name => "",
 descr => "",
 pooled_servers => [{"slot_id" => "2","chassis_id" =>"5"},{"slot_id" =>"5","chassis_id"=>"8"}],
@@ -321,7 +326,8 @@ state => This parameter ensures whether the policy should be present or absent o
 ##### Vnic template example manifest :
 The following example demonstrates how to define a manifest that uses ucsm_dockerdc_puppet module  to configure vnic template on Cisco UCS.
 
-```ucsm_vnic_template {"vnicLanConnTempl":
+```
+ucsm_vnic_template {"vnicLanConnTempl":
 policy_name =>"puppetdslmo",
 descr => "",
 switch_id =>"A",
@@ -374,7 +380,8 @@ state => This parameter ensures whether the policy should be present or absent o
 ##### Storage profile example manifest :
 The following example demonstrates how to define a manifest that uses ucsm_dockerdc_puppet module  to configure storage profile on Cisco UCS.
 
-```ucsm_storageprofile{'storageprofile':
+```
+ucsm_storageprofile{'storageprofile':
 policy_name => "Docker-storage",
 local_lun_list => [{"name" => "Boot-Lun","size" => "50","disk_group_configuration_name" => "pte88","slot_number" => ["1","2"]}, {"name" => "Data-Lun","size" => "20","disk_group_configuration_name" => "puppettes","slot_number" => ["1","2"]}],
 ip => "",
@@ -406,7 +413,8 @@ state => This parameter ensures whether the policy should be present or absent o
 ##### Service profile template example manifest :
 The following example demonstrates how to define a manifest that uses ucsm_dockerdc_puppet module  to configure service profile template on Cisco UCS.
 
-```ucsm_serviceprofiletemplate{'serviceprofiletemplate':
+```
+ucsm_serviceprofiletemplate{'serviceprofiletemplate':
 policy_name => "",
 type  => "",
 storage_profile_name => "",
