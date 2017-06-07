@@ -3,7 +3,7 @@
 #### Table of Contents
 1. [Module Description](#Module-Description)
 2. [Setup - The basics of getting started with ucsm](#setup)
-3. [Example Manifests](#Example Manifests)
+3. [Example-Manifests](#Example-Manifests)
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
@@ -23,16 +23,27 @@ Contributions to the ciscopuppet module are welcome. See CONTRIBUTING.md for gui
 ###### Puppet Master
 
 To install git use the following command :
-   ```yum install git -y```
+   ``` 
+   yum install git -y
+   ```
 The ucsm_dockerdc_puppet module must be cloned on the Puppet Master server. We recommend cloning in the modules directory.
 
-   ```https://github.com/pavan-koundinya/ucsm.git``` 
+   ```
+   https://github.com/pavan-koundinya/ucsm.git
+   ``` 
   
 To install pip package installer use the following commands.
-   - ``` curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"```
-   -``` python get-pip.py```
+   - ``` 
+   curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
+   ```
+   - ``` 
+   python get-pip.py
+   ```
 After pip is installed successfully install the ucsmsdk package using the following command.
-   - ```pip install ucsmsdk```
+   - ```
+   pip install ucsmsdk
+   
+   ```
    
    
 
@@ -56,7 +67,8 @@ ip => "IP address of the UCS server",
 username => "",                                                                                          
 password => "",                                                                                       
 state => "present",                                                                                           
-}  ```
+} 
+```
 
 ###### Description of parameters :
 
