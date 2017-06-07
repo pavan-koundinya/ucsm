@@ -1,4 +1,4 @@
-# cisco-ucsm
+# ucsm_dockerdc_puppet
 
 #### Table of Contents
 1. [Module Description](#Module-Description)
@@ -11,28 +11,28 @@
 ## Description
 Cisco ucsm_dockerdc_puppet module allows administrators to automate all aspects of Cisco UCS management including server, network, storage and hypervisor management. Bulk of the Cisco ucsm_dockerdc_puppet module work on the UCS Manager’s Management Information Tree (MIT), performing create, modify or delete actions on the Managed Objects (MO) in the tree. 
 The resources and capabilities provided by this Puppet Module will grow with contributions from Cisco, Puppet Labs and the open source community.
-Dependencies
+##### Dependencies
 
 The ucsm_dockerdc_puppet module has a dependency on the ucsmsdk python library. See the Setup section that follows for more information on ucsmsdk.
 
-Contributing
+##### Contributing
 
 Contributions to the ciscopuppet module are welcome. See CONTRIBUTING.md for guidelines.
 
 ## Setup
-Puppet Master
+###### Puppet Master
 
 To install git use the following command :
-   yum install git -y
+   ```yum install git -y```
 The ucsm_dockerdc_puppet module must be cloned on the Puppet Master server. We recommend cloning in the modules directory.
 
-   https://github.com/pavan-koundinya/ucsm.git 
+   ```https://github.com/pavan-koundinya/ucsm.git``` 
   
 To install pip package installer use the following commands.
-   - curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
-   - python get-pip.py
+   - ``` curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"```
+   -``` python get-pip.py```
 After pip is installed successfully install the ucsmsdk package using the following command.
-   - pip install ucsmsdk
+   - ```pip install ucsmsdk```
    
    
 
@@ -45,10 +45,10 @@ Software version Dependencies
 
 ## Example Manifests
 
-Bios Policy example manifest:
+##### Bios Policy example manifest:
 The following example demonstrates how to define a manifest that uses ucsm_dockerdc_puppet module  to configure bios policy on a Cisco UCS.
 
-ucsm_bios_policy{'biosVProfile':                                                                              
+```ucsm_bios_policy{'biosVProfile':                                                                              
 policy_name => "Docker-BiosPol",                                                                                   
 descr =>"",                                                                                              
 consistent_device_naming => "enabled",                                                                       
@@ -56,8 +56,9 @@ ip => "IP address of the UCS server",
 username => "",                                                                                          
 password => "",                                                                                       
 state => "present",                                                                                           
-}  
-Description of parameters :
+}  ```
+
+###### Description of parameters :
 
 ucsm_bios_profile => The bios policy resource type defined in Puppet DSL. This is required to identify which resource we intend to configure.
 
@@ -75,10 +76,10 @@ password => The administrative password
 
 state => This parameter ensures whether the policy should be present or absent on the UCS server.
 
-Vlan example manifest :
+##### Vlan example manifest :
 The following example demonstrates how to define a manifest that uses ucsm_dockerdc_puppet module  to configure Vlan on a Cisco UCS.
 
-ucsm_vlan{'fabricVlan':
+```ucsm_vlan{'fabricVlan':
 policy_name => "vlan603",
 id => "603",
 default_net => "yes",
@@ -86,9 +87,9 @@ ip => "IP address of the UCS server",
 username => "",
 password => "",
 state => "present",
-}
+}```
 
-Description of parameters :
+###### Description of parameters :
 
 ucsm_vlan => The Vlan resource type defined in Puppet DSL. This is required to identify which resource we intend to configure.
 
@@ -106,10 +107,10 @@ password => The administrative password
 
 state => This parameter ensures whether the policy should be present or absent on the UCS server.
 
-Boot Policy example manifest :
+##### Boot Policy example manifest :
 The following example demonstrates how to define a manifest that uses ucsm_dockerdc_puppet module  to configure boot policy on a Cisco UCS.
 
-ucsm_boot_policy{'PXE-Local-Boot':
+```ucsm_boot_policy{'PXE-Local-Boot':
         policy_name => "Docker-LocalBoot",
         order => "1",
         device_name => "Boot-Lun",
@@ -118,9 +119,9 @@ ucsm_boot_policy{'PXE-Local-Boot':
         ip => "the IP address of the UCS server",
         username => "",
         password => "",
-}
+}```
 
-Description of parameters :
+###### Description of parameters :
 
 ucsm_boot_policy => The boot policy resource type defined in Puppet DSL. This is required to identify which resource we intend to configure.
 
@@ -140,10 +141,10 @@ password => The administrative password
 
 state => This parameter ensures whether the policy should be present or absent on the UCS server.
 
-Macpool example manifest :
+##### Macpool example manifest :
 The following example demonstrates how to define a manifest that uses ucsm_dockerdc_puppet module  to configure mac pool on a Cisco UCS.
 
-ucsm_macpool{'macpoolPool':
+```ucsm_macpool{'macpoolPool':
 policy_name => "macpool12",
 descr =>"em",
 to => "00:25:B5:00:00:14",
@@ -152,9 +153,9 @@ ip => "IP address of UCS server",
 username => "",
 password => "",
 state => "present",
-}
+}```
 
-Description of parameters :
+###### Description of parameters :
 
 ucsm_macpool => The mac pool resource type defined in Puppet DSL. This is required to identify which resource we intend to configure.
 
@@ -174,10 +175,10 @@ password => The administrative password
 
 state => This parameter ensures whether the policy should be present or absent on the UCS server.
 
-Uuidpool example manifest :
+##### Uuidpool example manifest :
 The following example demonstrates how to define a manifest that uses ucsm_dockerdc_puppet module  to configure uuid pool on a Cisco UCS.
 
-ucsm_uuid_pool{'Pool':
+```ucsm_uuid_pool{'Pool':
 policy_name => "uuidPool1",
 descr =>"",
 to => "0000-000000000009",
@@ -186,9 +187,9 @@ ip => "IP address of UCS Server",
 username => "",
 password => "",
 state => "present",
-}
+}```
 
-Description of parameters :
+###### Description of parameters :
 
 ucsm_uuid_pool => The uuid pool resource type defined in Puppet DSL. This is required to identify which resource we intend to configure.
 
@@ -208,20 +209,20 @@ password => The administrative password
 
 state => This parameter ensures whether the policy should be present or absent on the UCS server.
 
-Disk group configuration policy example manifest :
+##### Disk group configuration policy example manifest :
 The following example demonstrates how to define a manifest that uses ucsm_dockerdc_puppet module  to configure disk group configuration policy on Cisco UCS.
 
-ucsm_disk_group_policy{'diskgroupconfiguration':
-policy_name => "policy1",
+```ucsm_disk_group_policy{'diskgroupconfiguration':
+policy_name => "",
 slot_numbers => ["1","2","3","4","5","6"],
 raid_level => "stripe-parity",
 ip => "",
 username => "",
 password => "",
 state => "present",
-}
+}```
 
-Description of parameters :
+###### Description of parameters :
 
 
 ucsm_disk_group_policy => The ucsm_disk_group_policy resource type defined in Puppet DSL. This is required to identify which resource we intend to configure.
@@ -242,17 +243,17 @@ password => The administrative password
 
 state => This parameter ensures whether the policy should be present or absent on the UCS server.
 
-Host firmware package example manifest :
+##### Host firmware package example manifest :
 The following example demonstrates how to define a manifest that uses ucsm_dockerdc_puppet module  to configure Host firmware package on Cisco UCS.
 
-ucsm_hostfirmwarepackage{'firmwareComputeHostPack':
+```ucsm_hostfirmwarepackage{'firmwareComputeHostPack':
         policy_name => "package",
         descr => "",
         state => "present",
         ip => "",
         username => "",
         password => "",
-}
+}```
 
 Description of parameters :
 
@@ -270,10 +271,10 @@ password => The administrative password
 
 state => This parameter ensures whether the policy should be present or absent on the UCS server.
 
-Server pool example manifest :
+##### Server pool example manifest :
 The following example demonstrates how to define a manifest that uses ucsm_dockerdc_puppet module  to configure server pool on Cisco UCS.
 
-ucsm_serverpool{'ComputePool':
+```ucsm_serverpool{'ComputePool':
 policy_name => "",
 descr => "",
 pooled_servers => [{"slot_id" => "2","chassis_id" =>"5"},{"slot_id" =>"5","chassis_id"=>"8"}],
@@ -281,9 +282,9 @@ ip => "",
 username => "",
 password => "",
 state => "",
-}
+}```
 
-Description of parameters :
+###### Description of parameters :
 
 ucsm_serverpool => The ucsm_serverpool resource type defined in Puppet DSL. This is required to identify which resource we intend to configure.
 
@@ -301,10 +302,10 @@ password => The administrative password
 
 state => This parameter ensures whether the policy should be present or absent on the UCS server.
 
-Vnic template example manifest :
+##### Vnic template example manifest :
 The following example demonstrates how to define a manifest that uses ucsm_dockerdc_puppet module  to configure vnic template on Cisco UCS.
 
-ucsm_vnic_template {"vnicLanConnTempl":
+```ucsm_vnic_template {"vnicLanConnTempl":
 policy_name =>"puppetdslmo",
 descr => "",
 switch_id =>"A",
@@ -319,9 +320,9 @@ ip => "172.28.224.121",
 username => "admin",
 password => "password",
 state => "present",
-}
+}```
 
-Description of parameters :
+###### Description of parameters :
 
 ucsm_vnic_template => The ucsm_vnic_template resource type defined in Puppet DSL. This is required to identify which resource we intend to configure.
 
@@ -353,19 +354,19 @@ password => The administrative password
 
 state => This parameter ensures whether the policy should be present or absent on the UCS server.
 
-Storage profile example manifest :
+##### Storage profile example manifest :
 The following example demonstrates how to define a manifest that uses ucsm_dockerdc_puppet module  to configure storage profile on Cisco UCS.
 
-ucsm_storageprofile{'storageprofile':
+```ucsm_storageprofile{'storageprofile':
 policy_name => "Docker-storage",
 local_lun_list => [{"name" => "Boot-Lun","size" => "50","disk_group_configuration_name" => "pte88","slot_number" => ["1","2"]}, {"name" => "Data-Lun","size" => "20","disk_group_configuration_name" => "puppettes","slot_number" => ["1","2"]}],
 ip => "",
 username => "",
 password => "",
 state => "present",
-}
+}```
 
-Description of parameters :
+###### Description of parameters :
 
 ucsm_storageprofile => The ucsm_storageprofile resource type defined in Puppet DSL. This is required to identify which resource we intend to configure.
 
@@ -375,7 +376,6 @@ local_lun_list => A list of dictionary objects. Each object consists of followin
                   name => Name of Local Lun
                   size => Size in GB.
                   disk_group_configuration_name => The disk group configuration policy name to associate with the Local LUN.
-                  slot_number => Ambiguos parameter(Have to revisit)
 
 ip => the IP address of the UCS server.
 
@@ -385,10 +385,10 @@ password => The administrative password
 
 state => This parameter ensures whether the policy should be present or absent on the UCS server.
 
-Service profile template example manifest :
+##### Service profile template example manifest :
 The following example demonstrates how to define a manifest that uses ucsm_dockerdc_puppet module  to configure service profile template on Cisco UCS.
 
-ucsm_serviceprofiletemplate{'serviceprofiletemplate':
+```ucsm_serviceprofiletemplate{'serviceprofiletemplate':
 policy_name => "",
 type  => "",
 storage_profile_name => "",
@@ -408,9 +408,9 @@ ip => "",
 username => "",
 password => "",
 state => "present",
-}
+}```
 
-Description of parameters :
+###### Description of parameters :
 
 ucsm_serviceprofiletemplate => The ucsm_serviceprofiletemplate resource type defined in Puppet DSL. This is required to identify which resource we intend to configure.
 
@@ -451,6 +451,7 @@ username => The administrative username
 password => The administrative password
 
 state => This parameter ensures whether the policy should be present or absent on the UCS server.
+
 ## Reference
 
 Here, include a complete list of your module's classes, types, providers,
